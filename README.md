@@ -3,7 +3,14 @@
 Project for Lead Researcher position @iris.ai
 
 #### Time spent
-31/01 14-16h: initial task setup - EDA - first running predictor
+
+31/01 14-16h: initial task setup - EDA
+
+02/02 20-22h: EDA + preprocessing [SYNC]
+
+04/02 08-11h: baseline_multilabel setup - implementation testing
+    17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
+
 
 
 ## Research article classification
@@ -20,9 +27,20 @@ Arxiv dataset: (HF_datasets)[https://huggingface.co/datasets/arxiv_dataset/blob/
 #### EDA
 
 
-### Model
 
+### Experiments
 
+Baseline: BERT
+Better encoder: DeBERTa
+Better pre-training: SciBERT
+
+#### Metrics
+
+- accuracy
+- precision
+- recall
+- F1
+- Hamming loss
 
 ## Results/Report
 
@@ -55,3 +73,4 @@ poetry install
 #### ongoing notes
 
 1. try HF loader first, then bother with installation and EDA
+2. Go for baseline first fast, then try to improve
