@@ -17,8 +17,11 @@ Project for Lead Researcher position @iris.ai
 
 ### Task
 
-open-set classification / multi-label?
+(extreme) multi-label / hierarchical / multi-level learning
 
+### Papers
+
+- [A Survey on Extreme Multi-label Learning](link)
 
 ### Data
 

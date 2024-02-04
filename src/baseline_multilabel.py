@@ -65,6 +65,7 @@ def main():
         test_size=0.1, seed=args.seed, stratify_by_column="strlabel"
     )
     dataset["simple_validation"] = simple_validation["test"]
+
     label_name = "cats"
 
     classes = sorted(set([c for cats in dataset["train"][label_name] for c in cats]))
@@ -131,13 +132,14 @@ def main():
     except KeyboardInterrupt as e:
         print(e)
 
-    trainer.evaluate(eval_dataset=tokenized_dataset["test"].select(list(range(0, 2000))), metric_key_prefix="test")
+    subsample_test = tokenized_dataset["test"].select(list(range(0, 10000)))  # takes 30 minutes on desktop
+    trainer.evaluate(eval_dataset=subsample_test, metric_key_prefix="test")  # 20K samples is enough?
 
     # print some example outputs
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
     print("Example outputs to check:")
-    subset = tokenized_dataset["test"].select(list(range(0, 5)))
-    print(trainer.predict(subset), "vs. GT: ", subset["labels"])
+    subset = tokenized_dataset["test"].select(list(range(0, 100)))
+    print(trainer.predict(subset), "vs. GT: ", subset["labels"])  # to be logged for debugging purposes
 
 
 if __name__ == "__main__":

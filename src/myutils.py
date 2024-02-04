@@ -18,7 +18,10 @@ class CustomArguments:
         default="sentence-transformers/paraphrase-mpnet-base-v2",  # "jordyvl/scibert_scivocab_uncased_sentence_transformer"
         metadata={"help": "Path to pretrained sentence transformer model"},
     )
-
+    LLM: str = field(
+        default="NousResearch/Llama-2-7b-hf",
+        metadata={"help": "Path to pretrained sentence transformer model"},
+    )
 
 def seed_everything(seed):
     random.seed(seed)
