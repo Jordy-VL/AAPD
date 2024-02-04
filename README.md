@@ -10,7 +10,7 @@ Project for Lead Researcher position @iris.ai
 
 04/02 08-11h: baseline_multilabel setup - implementation testing
     17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
-
+    20-21u: implementation of zero/few-shot classification and generative models for instruction tuning (to be tested) [SYNC]
 
 
 ## Research article classification
