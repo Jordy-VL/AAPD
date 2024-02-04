@@ -1,5 +1,5 @@
 #!/bin/bash 
-python3 baseline_multilabel.py --experiment_name test_implementation  \
+python3 baseline_multilabel.py --experiment_name test_implementation \
 --model_name_or_path 'bert-base-uncased' \
 --output_dir '../results' \
 --seed 42 \

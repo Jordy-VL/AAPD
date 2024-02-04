@@ -58,7 +58,7 @@ def main():
         config={k: v for k, v in args.__dict__.items() if v is not None},
     )
 
-    ## Load the dataset and initialize the classes
+    ## Load the dataset and initialize the classes; https://github.com/huggingface/setfit/issues/226
     dataset = load_dataset("jordyvl/arxiv_dataset_prep")
 
     classes = sorted(set([c.strip() for cats in dataset["train"]["strlabel"] for c in cats.split(" ; ")]))
@@ -74,9 +74,7 @@ def main():
     print(f"Id2class: {id2class}")
 
     #'jordyvl/scibert_scivocab_uncased_sentence_transformer'
-    model = SetFitModel.from_pretrained(
-        "sentence-transformers/paraphrase-mpnet-base-v2", multi_target_strategy="one-vs-rest"
-    )
+    model = SetFitModel.from_pretrained(args.sentence_transformer, multi_target_strategy="one-vs-rest")
 
     training_args = TrainingArguments(
         output_dir=os.path.join(args.output_dir, args.experiment_name),
