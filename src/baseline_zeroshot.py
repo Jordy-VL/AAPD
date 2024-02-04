@@ -11,15 +11,15 @@ __version__ = "3.0"
 import os
 import numpy as np
 from argparse import Namespace
-from datasets import load_dataset, oad_from_disk, ClassLabel, Sequence
-from transformers import AutoTokenizer, HfArgumentParser, DataCollatorWithPadding
+from datasets import load_dataset, load_from_disk, ClassLabel, Sequence
+from transformers import HfArgumentParser
 from transformers import TrainingArguments
 import wandb
 import evaluate
-from myutils import CustomArguments, seed_everything, preprocess_function
+from myutils import CustomArguments, seed_everything
 
 from sentence_transformers.losses import CosineSimilarityLoss
-from setfit import SetFitModel, SetFitTrainer
+from setfit import SetFitModel, Trainer
 
 
 def sigmoid(x):
@@ -102,7 +102,7 @@ def main():
     )
 
     # Create trainer
-    trainer = SetFitTrainer(
+    trainer = Trainer(
         model=model,
         train_dataset=dataset["train"],
         eval_dataset=dataset["test"],
