@@ -7,7 +7,7 @@ CUDA_VISIBLE_DEVICES=0 python3 baseline_multilabel.py --experiment_name DeBERT_5
 --evaluation_strategy steps \
 --per_device_train_batch_size 16 \
 --gradient_accumulation_steps 1 \
---learning_rate 2e-5 \
+--learning_rate 2e-5 \q
 --num_train_epochs 1 \
 --max_steps 50000 \
 --logging_strategy steps \

@@ -7,7 +7,7 @@ __license__ = "GPL v3"
 __version__ = "3.0"
 
 ## Necessary installs
-#!pip install datasets transformers evaluate sentencepiece accelerate
+#!pip install datasets transformers evaluate sentencepiece accelerate munkres
 
 import os
 import numpy as np
@@ -196,7 +196,7 @@ PROMPT_DICT = {
         "Write a response that appropriately completes the request.\n\n"
         "### Instruction:\n{instruction}\n\n### Input:\n{document}\n\n### Response:{response}"
     ),
-    -"prompt_input": (
+    "prompt_input": (
         "Below is an instruction that describes a task, paired with an input that provides further context. "
         "Write a response that appropriately completes the request.\n\n"
         "### Instruction:\n{instruction}\n\n### Input:\n{document}\n\n### Response:"
@@ -214,17 +214,17 @@ def row_to_prompt(row, prompt_type="prompt_instruction", max_input_tokens=None):
     document = row["abstract"]
     gt = response = row["strlabel"]
 
-    prompt = PROMPT_DICT[prompt_type].format_map(instruction=instruction, document=document, response=response)
+    prompt = PROMPT_DICT[prompt_type]
     if "instruction" in prompt_type:
         text = prompt.format_map({"instruction": instruction, "document": document, "response": response})
     else:
-        text = prompt.format_map({"document": document, "document": document})
+        text = prompt.format_map({"instruction": instruction, "document": document})
     if max_input_tokens is not None:
         text = text[:max_input_tokens]
     return text, gt
 
 
-def batched_row_to_prompt(batch, filter=None, prompt_type="prompt_task", max_input_tokens=None):
+def batched_row_to_prompt(batch, prompt_type="prompt_task", max_input_tokens=None):
     texts = []
     gts = []
     for i in range(len(batch["id"])):
@@ -241,9 +241,16 @@ def create_instruction_tuning_data():
         lambda x: batched_row_to_prompt(x, prompt_type="prompt_instruction", max_input_tokens=2048),
         batched=True,
         batch_size=8,
-        remove_columns=["abstract", "primary", "secondary"],
         num_proc=1,
     )
+    # DEV: coding could be improved here, \eg map to remove response line, prototyping fast for now
+    instruction_dataset["test"] = dataset["test"].map(
+        lambda x: batched_row_to_prompt(x, prompt_type="prompt_input", max_input_tokens=2048),
+        batched=True,
+        batch_size=8,
+        num_proc=1,
+    )
+    instruction_dataset = instruction_dataset.remove_columns((["abstract", "primary", "secondary"]))
     instruction_dataset.save_to_disk("../data/arxiv_dataset_instructions")
 
 

@@ -22,6 +22,19 @@ class CustomArguments:
         default="NousResearch/Llama-2-7b-hf",
         metadata={"help": "Path to pretrained sentence transformer model"},
     )
+    multi_target_strategy: str = field(
+        default="one-vs-rest",
+        metadata={
+            "help": """The multi-target strategy to use. Possible values are:
+                  "one-vs-rest": uses a OneVsRestClassifier head.
+                "multi-output": uses a MultiOutputClassifier head.
+                "classifier-chain": uses a ClassifierChain head."""
+        },
+    )
+    use_differentiable_head: bool = field(
+        default=False,
+        metadata={"help": "Whether to use differentiable heads for multi-target models."},
+    )
 
 
 def seed_everything(seed):
@@ -42,6 +55,6 @@ def preprocess_function(example, class2id, tokenizer, label_name="cats"):
         label_id = class2id[label]
         labels[label_id] = 1.0
 
-    example = tokenizer(text, truncation=True,max_length=512, padding="max_length")
+    example = tokenizer(text, truncation=True, max_length=512, padding="max_length")
     example["labels"] = labels
     return example
