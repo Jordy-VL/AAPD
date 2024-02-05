@@ -12,11 +12,7 @@ __version__ = "3.0"
 import os
 import numpy as np
 from argparse import Namespace
-<<<<<<< HEAD
 from datasets import load_dataset, load_from_disk, ClassLabel, Sequence
-=======
-from datasets import load_from_disk, load_dataset, ClassLabel, Sequence
->>>>>>> 94778b06c096813a732e2e3815b50d8be01d3df5
 from transformers import AutoTokenizer, HfArgumentParser, DataCollatorWithPadding
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
 import wandb
