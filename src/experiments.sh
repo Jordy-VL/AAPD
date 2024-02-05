@@ -12,8 +12,9 @@ CUDA_VISIBLE_DEVICES=0 python3 baseline_multilabel.py --experiment_name DeBERT_5
 --max_steps 50000 \
 --logging_strategy steps \
 --logging_steps 0.05 \
---save_steps 0.05 \
---eval_steps 0.05 \
+--save_steps 0.2 \
+--eval_steps 0.2 
+
 #0.05*max_steps \ #20 implicit epochs 
 #--metric_for_best_model  \
 #--label_smoothing_factor 0 \
