@@ -12,7 +12,7 @@ __version__ = "3.0"
 import os
 import numpy as np
 from argparse import Namespace
-from datasets import load_from_disk, ClassLabel, Sequence
+from datasets import load_from_disk, load_dataset, ClassLabel, Sequence
 from transformers import AutoTokenizer, HfArgumentParser, DataCollatorWithPadding
 from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
 import wandb
@@ -57,14 +57,16 @@ def main():
     )
 
     ## Load the dataset and initialize the classes
-    DATAROOT = os.path.join(os.path.dirname(__file__), "..", "data")
-    dataset = load_from_disk(os.path.join(DATAROOT, "arxiv_dataset_prepped"))
+    # DATAROOT = os.path.join(os.path.dirname(__file__), "..", "data")
+    # dataset = load_from_disk(os.path.join(DATAROOT, "arxiv_dataset_prepped"))
 
-    # make another subset of validation - still too large
-    simple_validation = dataset["validation"].train_test_split(
-        test_size=0.1, seed=args.seed, stratify_by_column="strlabel"
-    )
-    dataset["simple_validation"] = simple_validation["test"]
+    # # make another subset of validation - still too large
+    # simple_validation = dataset["validation"].train_test_split(
+    #     test_size=0.1, seed=args.seed, stratify_by_column="strlabel"
+    # )
+    # dataset["simple_validation"] = simple_validation["test"]
+
+    dataset = load_dataset("jordyvl/arxiv_dataset_prep")  # new version for continued comparisons
 
     label_name = "cats"
 

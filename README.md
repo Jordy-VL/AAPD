@@ -11,7 +11,8 @@ Project for Lead Researcher position @iris.ai
 04/02 08-11h: baseline_multilabel setup - implementation testing
     17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
     20-21u: implementation of zero/few-shot classification and generative models for instruction tuning (to be tested) [SYNC]
-
+05/02 13-14h: patch for stringlabels in HF datasets [sync]
+    20-21h: testing zero/few-shot classification and generative models for instruction tuning 
 
 ## Research article classification
 
@@ -47,7 +48,46 @@ Better pre-training: SciBERT
 
 ## Results/Report
 
-See ...
+First baseline: BERT 10K train steps@6
+Run summary:
+                 eval/accuracy 0.9906
+                       eval/f1 0.09704
+                  eval/hamming 0.0094
+                     eval/loss 0.03556
+                eval/precision 0.78273
+                   eval/recall 0.05173
+                  eval/runtime 153.5857
+       eval/samples_per_second 43.904
+         eval/steps_per_second 7.318
+                 test/accuracy 0.99066
+                       test/f1 0.10248
+                  test/hamming 0.00934
+                     test/loss 0.03568
+                test/precision 0.78642
+                   test/recall 0.05481
+                  test/runtime 227.935
+       test/samples_per_second 43.872
+         test/steps_per_second 7.313
+                   train/epoch 0.03
+             train/global_step 10000
+           train/learning_rate 0.0
+                    train/loss 0.0665
+              train/total_flos 1.0442950330826088e+16
+              train/train_loss 0.06653
+           train/train_runtime 6679.0776
+train/train_samples_per_second 8.983
+  train/train_steps_per_second 1.497
+
+Second baseline: BERT 50K train steps@6
+
+wandb:                  test/accuracy 0.99346
+wandb:                        test/f1 0.57809
+wandb:                   test/hamming 0.00654
+wandb:                      test/loss 0.0195
+wandb:                 test/precision 0.77619
+wandb:                    test/recall 0.46054
+
+See wandb report @ ...
 
 
 
