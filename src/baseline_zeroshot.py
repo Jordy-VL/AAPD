@@ -60,8 +60,10 @@ def main():
 
     ## Load the dataset and initialize the classes; https://github.com/huggingface/setfit/issues/226
     dataset = load_dataset("jordyvl/arxiv_dataset_prep")
+    from pdb import set_trace
 
-    classes = sorted(set([c.strip() for cats in dataset["train"]["strlabel"] for c in cats.split(" ; ")]))
+    set_trace()
+    classes = sorted(set([c.strip() for cats in dataset["train"]["strlabel"] for c in cats.split(";")]))
     dataset.cast_column("strlabel", Sequence(ClassLabel(names=classes)))  # .class_encode_column("cats")
     class2id = {class_: id for id, class_ in enumerate(classes)}
     id2class = {id: class_ for class_, id in class2id.items()}

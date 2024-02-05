@@ -26,10 +26,9 @@ from transformers import (
 )
 from peft import LoraConfig, PeftModel
 from trl import SFTTrainer
-from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
+from transformers import TrainingArguments
 import wandb
-import evaluate
-from myutils import CustomArguments, seed_everything, preprocess_function
+from myutils import CustomArguments, seed_everything
 from munkres import Munkres, make_cost_matrix
 
 

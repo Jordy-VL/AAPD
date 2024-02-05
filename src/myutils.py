@@ -11,7 +11,7 @@ class CustomArguments:
         metadata={"help": "Name of the experiment"},
     )
     model_name_or_path: str = field(
-        default="bert-base-uncased",  # "microsoft/deberta-v3-small", "scibert-scivocab-uncased"
+        default="bert-base-uncased",  # "microsoft/deberta-v3-small", "allenai/scibert_scivocab_uncased"
         metadata={"help": "Path to pretrained model or model identifier from huggingface.co/models"},
     )
     sentence_transformer: str = field(
@@ -22,6 +22,7 @@ class CustomArguments:
         default="NousResearch/Llama-2-7b-hf",
         metadata={"help": "Path to pretrained sentence transformer model"},
     )
+
 
 def seed_everything(seed):
     random.seed(seed)
@@ -41,6 +42,6 @@ def preprocess_function(example, class2id, tokenizer, label_name="cats"):
         label_id = class2id[label]
         labels[label_id] = 1.0
 
-    example = tokenizer(text, truncation=True)
+    example = tokenizer(text, truncation=True,max_length=512, padding="max_length")
     example["labels"] = labels
     return example
