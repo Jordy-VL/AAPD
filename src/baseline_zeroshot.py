@@ -89,7 +89,7 @@ def main():
     ## related to https://stackoverflow.com/questions/40617199/generate-n-choose-2-combinations-in-python-on-very-large-data-sets
     ## backoff solution: subsample training data to 5% of the original size
     dataset["train"] = dataset["train"].select(
-        list(range(0, 0.05 * len(dataset["train"])))
+        list(range(0, int(0.05 * len(dataset["train"]))))
     )  # permuted by default from train test split
 
     model = SetFitModel.from_pretrained(
