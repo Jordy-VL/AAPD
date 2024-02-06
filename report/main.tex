@@ -2,7 +2,7 @@
 
 %%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
 % \usepackage{cvpr}              % To produce the CAMERA-READY version
-\usepackage[review,pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+\usepackage[review,pagenumbers]{cvpr} % To force page numbers, \eg for an arXiv version
 
 % Import additional packages in the preamble file, before hyperref
 \input{preamble}
@@ -15,7 +15,7 @@
  
 \begin{document}
 
-\title{Report on Arxiv Scientific Text Classification} %or tasks?
+\title{Report on arXiv Scientific Text Classification} %or tasks?
 
 \newcommand{\superaffil}[2]{\textsuperscript{#1}\,#2}
 
@@ -31,8 +31,12 @@
 
 \section{Summary}
 
-This report presents the results of the Arxiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a training set of 2M papers and a validation set of 500K papers. The performance of the models is evaluated using precision, recall, micro-averaged F1 score, and hamming loss.
+This report presents the results of the arXiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a category-stratified training set of 2M papers and a validation set of 500K papers.
 
+First, I focused on establishing a discriminative encoder-based baseline for multi-label classification using BERT \cite{devlin2018bert}.
+I then experimented with different encoders (DeBERTa \cite{he2020deberta} (better encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates ($1e-4\to2e-5$), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
+
+Out of interest, I also explored alternate approaches such as few-shot classification with a one-vs-rest strategy (SetFit \cite{tunstall2022efficient}) and generative models (Llama2 \cite{touvron2023llama}) instruction-tuned on human-readable labels. The report concludes with a discussion of future work.
 
 \noindent The key observations of this report are:
 \begin{enumerate}
@@ -40,23 +44,64 @@ This report presents the results of the Arxiv Scientific Text Classification tas
   \item  Observations
 \end{enumerate}
 
-
 \section{Exploratory Data Analysis}
 
-\section{Approaches}
+The notebook `EDA.ipynb` contains documentation and visualization of observations made on the arXiv dataset.
 
-SetFit \cite{tunstall2022efficient}
+The papers are classified into 176 categories, with a mean of 3.5 categories per paper. The distribution of the number of papers per category is highly skewed, with the top 10 categories accounting for 50\% of the papers.
+
+The preprocessed dataset is available at \url{https://huggingface.co/datasets/jordyvl/arXiv_dataset_prep}. The dataset contains the following fields:
+\begin{itemize}[noitemsep]
+  \item \textit{abstract}: without any preprocessing such as lemmatization, risky with many technical terms, could reduce overfitting when done right
+  \item \textit{primary}: the primary category of the paper; could be used for multi-class classification
+  \item \textit{categories}: the categories of the paper as a list of labels, \eg [cs.AI, eess.AS]; multi-label classification
+  \item \textit{strlabel}: human-readable labels for the categories joined with ';', \eg [cs.AI, eess.AS]  $\to$ "Artificial Intelligence;Audio and Speech Processing"
+\end{itemize}
 
 
 \subsection{Evaluation}
 
+The performance of the discriminative models is evaluated using standard metrics: \textit{precision, recall, micro-averaged F1 score, and hamming loss}.
+The generative models are evaluated using my own extended metric, \textit{Average Normalized Levenshtein Similarity} (\ANLS) \cite{VanLandeghem2023dude}, that evaluates the quality of the generated labels and the similarity to the human-readable labels, agnostic of the order of the labels and permissive to low edit distance on individual generated labels.
+
+For example, the \ANLS of the generated labels "Audio and Speech Processing;Artificial Intelligence" and the human-readable labels "Artificial Intelligence;Audio and Speech Processing" is 1.0, as well as for "Audio Processing;Artificial Intelligence" given an NLS threshold $\tau$ of 0.5. The threshold can be adapted to the task's needs, \eg to enforce a minimum similarity to the human-readable labels, such that they even incomplete ones could be reconstructed by surface form or semantic similarity (\eg Audio Processing is closest to Audio and Speech Processing of all other labels).
+
+\section{Results}
+
+All results are reported on a test set subsampled from the validation set to keep computation time reasonable. The best attained results are reported in Table \ref{tab:results}.
+
+\begin{table}[h]
+  \centering
+  \caption{Results}
+  \label{tab:results}
+  \begin{tabular}{lcccc}
+    \toprule
+    Model & Precision & Recall & F1 & Hamming Loss \\
+    \midrule
+    BERT                                           \\
+    DeBERTa                                        \\
+    SciBERT                                        \\
+    SetFit                                         \\
+    Llama2                                         \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \section{Future Work}
 
-Of course, all of the following depend on the needs of the task and the available resources.
+Of course, all the following depend on the needs of the task and the available resources.
 
 \begin{todolist}
-  \item Feature fusion from arxiv metadata (e.g. authors (co-citation network), date of submission)
-  \item Ensembling of models
+\item Hyperparameter tuning: extend MultiLabelTrainer with \href{https://huggingface.co/docs/transformers/en/hpo_train}{Optuna or Ray Tune or Wandb sweeps}
+\item Feature fusion from arXiv metadata (\eg authors (co-citation network), date of submission)
+\item Ensembling of different pre-trained models (\eg BERT, DeBERTa, SciBERT, SetFit, Llama2), potentially weighted by normalized validation scores
+\item Combine predictive models with different output spaces (\eg multi-label, multi-class) to enforce consistency on the primary category and average label cardinality
+\item Continue with \textbf{encoder-decoder models} for multi-label classification (\eg T5Enc \cite{kementchedjhieva2023exploration})
+\begin{itemize}
+  \item Comment: overkill for single task finetuning, could be useful when combining multiple tasks (summarization, translation, classification, \ldots)
+\end{itemize}
+\item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
+\item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
 \end{todolist}
 
 %%%%%%%%% REFERENCES

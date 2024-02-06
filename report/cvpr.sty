@@ -382,10 +382,7 @@
   % Print a warning if incorrect options for article are specified
   \@ifclasswith{article}{10pt}{}{%
     \PackageWarningNoLine{cvpr}{Incorrect font size specified - CVPR requires 10-point fonts. Please load document class `article' with `10pt' option}
-  }
-  \@ifclasswith{article}{twocolumn}{}{%
-    \PackageWarningNoLine{cvpr}{Single column document - CVPR requires papers to have two-column layout. Please load document class `article' with `twocolumn' option}
-  }
+}
   \@ifclasswith{article}{letterpaper}{}{%
     \PackageWarningNoLine{cvpr}{Incorrect paper size - CVPR uses paper size `letter'. Please load document class `article' with `letterpaper' option}
   }
