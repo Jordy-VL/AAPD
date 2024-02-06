@@ -14,9 +14,9 @@ All code under `src`
 
 ### Papers
 
-- (DeBERTa)[https://openreview.net/forum?id=XPZIaotutsD] and (v3)[https://arxiv.org/abs/2111.09543]
-- (SciBERT)[https://aclanthology.org/D19-1371/]
-- (Two-way Multi-Label Loss)[https://openaccess.thecvf.com/content/CVPR2023/papers/Kobayashi_Two-Way_Multi-Label_Loss_CVPR_2023_paper.pdf]
+- [DeBERTa](https://openreview.net/forum?id=XPZIaotutsD) and [v3](https://arxiv.org/abs/2111.09543)
+- [SciBERT](https://aclanthology.org/D19-1371/)
+- [Two-way Multi-Label Loss](https://openaccess.thecvf.com/content/CVPR2023/papers/Kobayashi_Two-Way_Multi-Label_Loss_CVPR_2023_paper.pdf)
 
 ### Data
 
