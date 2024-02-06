@@ -16,7 +16,7 @@ from transformers import HfArgumentParser
 from transformers import TrainingArguments as HFTrainingArguments
 import wandb
 import evaluate
-from myutils import CustomArguments, seed_everything
+from myutils import CustomArguments, seed_everything, preprocess_zero_function
 
 from setfit import SetFitModel, Trainer, TrainingArguments
 
@@ -79,22 +79,19 @@ def main():
     class2id = {class_: id for id, class_ in enumerate(classes)}
     id2class = {id: class_ for class_, id in class2id.items()}
 
-    dataset = dataset.map(
-        lambda x: {"label": [c.strip() for c in x["strlabel"].split(";")]}, remove_columns=["strlabel"]
-    )
-    dataset.cast_column("label", Sequence(ClassLabel(names=classes)))
-    # for setfit compatibility
-    # dataset.rename_column("strlabel", "labels")
-    dataset = dataset.rename_column("abstract", "text")
-
     print(f"Classes: {len(classes)}")
+
+    # for setfit compatibility need 'label' (onehot) and 'text' columns
+    dataset = dataset.map(lambda x: preprocess_zero_function(x, class2id), remove_columns=["strlabel"]).rename_column(
+        "abstract", "text"
+    )
 
     #'jordyvl/scibert_scivocab_uncased_sentence_transformer'
     model = SetFitModel.from_pretrained(
         args.sentence_transformer,
         multi_target_strategy=args.multi_target_strategy,
         use_differentiable_head=args.use_differentiable_head,
-        labels=classes,
+        # labels=classes,
     )
 
     # Create trainer

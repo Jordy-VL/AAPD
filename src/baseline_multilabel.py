@@ -30,6 +30,7 @@ def hamming_loss(y_true, y_pred):
 
 clf_metrics = evaluate.combine(["accuracy", "precision", "recall", "f1"])
 
+# DEV:  port mAP for classes and instances from https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py ?
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
