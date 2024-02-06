@@ -45,8 +45,13 @@ Arxiv dataset: (HF_datasets)[https://huggingface.co/datasets/arxiv_dataset/blob/
 ### Experiments
 
 Baseline: BERT
-Better encoder: DeBERTa
-Better pre-training: SciBERT
+- Better encoder: DeBERTa
+- Better pre-training: SciBERT
+- Better loss: Two-way Multi-Label Loss
+
+Alternate approaches:
+- Few-shot classification (Setfit)
+- Generative models for instruction tuning (Llama2)
 
 #### Metrics
 
@@ -55,6 +60,9 @@ Better pre-training: SciBERT
 - recall
 - F1
 - Hamming loss
+
+TODO:
+- [ ] port metrics mAP (classwise) and mAP (samplewise) from (repo)[https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py]
 
 ## Results/Report
 

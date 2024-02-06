@@ -7,7 +7,7 @@ CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_
 --evaluation_strategy steps \
 --per_device_train_batch_size 64 \
 --gradient_accumulation_steps 1 \
---learning_rate 1e-5 \
+--learning_rate 2e-5 \
 --num_train_epochs 1 \
 --max_steps 25000 \
 --logging_strategy steps \
