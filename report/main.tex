@@ -1,0 +1,68 @@
+\documentclass[10pt,letterpaper]{article}
+
+%%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
+% \usepackage{cvpr}              % To produce the CAMERA-READY version
+\usepackage[review,pagenumbers]{cvpr} % To force page numbers, e.g. for an arXiv version
+
+% Import additional packages in the preamble file, before hyperref
+\input{preamble}
+
+%%%%%%%%% PAPER ID  - PLEASE UPDATE
+\def\paperID{XXX} % *** Enter the Paper ID here
+\def\confName{XXX}
+\def\confYear{2024}
+
+ 
+\begin{document}
+
+\title{Report on Arxiv Scientific Text Classification} %or tasks?
+
+\newcommand{\superaffil}[2]{\textsuperscript{#1}\,#2}
+
+\author{
+  \small Jordy Van Landeghem\superaffil{1,2}
+  \and
+  \footnotesize{
+    \textsuperscript{1}KU Leuven
+  }
+}
+
+\maketitle
+
+\section{Summary}
+
+This report presents the results of the Arxiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a training set of 2M papers and a validation set of 500K papers. The performance of the models is evaluated using precision, recall, micro-averaged F1 score, and hamming loss.
+
+
+\noindent The key observations of this report are:
+\begin{enumerate}
+  [label=\Roman*.,leftmargin=2\parindent]
+  \item  Observations
+\end{enumerate}
+
+
+\section{Exploratory Data Analysis}
+
+\section{Approaches}
+
+SetFit \cite{tunstall2022efficient}
+
+
+\subsection{Evaluation}
+
+\section{Future Work}
+
+Of course, all of the following depend on the needs of the task and the available resources.
+
+\begin{todolist}
+  \item Feature fusion from arxiv metadata (e.g. authors (co-citation network), date of submission)
+  \item Ensembling of models
+\end{todolist}
+
+%%%%%%%%% REFERENCES
+{\small
+\bibliographystyle{ieeenat_fullname}
+\bibliography{main}
+}
+
+\end{document}
