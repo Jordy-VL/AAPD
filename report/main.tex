@@ -84,16 +84,21 @@ All experiment runs and results are available at \url{https://wandb.ai/jordy-vla
 
 \begin{table}[h]
   \centering
-  \caption{Results}
+\caption{Results of the different models on the test set. The hamming loss is minimized, while other metrics are maximized.}
   \label{tab:results}
-\begin{tabular}{lccccc}
+\npdecimalsign{.}
+\nprounddigits{3}
+\begin{tabular}{l|n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}}
     \toprule
-Model & Precision & Recall & F1 & Hamming Loss & ANLS \\
+\text{Model} & \text{Accuracy} & \text{Precision} & \text{Recall} & \text{F1} & \text{Hamming}($\downarrow$) & \text{ANLS} \\
     \midrule
-BERT                                                  \\
-DeBERTa                                               \\
-SciBERT                                               \\
-SetFit                                                \\
+BERT(10K) &   0.993458787878788 & 0.776191475960529 & 0.460541887262535 & 0.578085297681873 & 0.006541212121212 &  \\
+BERT & 0.993458787878788	& 0.776191475960529& 	0.460541887262535& 	0.578085297681873& 0.006541212121212 	 & \\
+DeBERTa   & 0.993986060606061	 & 0.763045337895637 & 	0.554967958688484	 & 0.642581853546086	 & 0.006013939393939 & \\
+SciBERT 	 & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349	 &	{\npboldmath}0.626907505450016		 & {\npboldmath} 0.694904722452361		 & {\npboldmath}0.005356363636364 	 &\\
+SciBERT (2-way) 	 & \\
+SetFit (ovr@20)                                               \\
+SetFit (ovr-diff@20)                                               \\
 Llama2                                                \\
     \bottomrule
   \end{tabular}
