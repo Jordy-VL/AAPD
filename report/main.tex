@@ -1,8 +1,8 @@
-\documentclass[10pt,letterpaper]{article}
+\documentclass[11pt,letterpaper]{article}
 
 %%%%%%%%% PAPER TYPE  - PLEASE UPDATE FOR FINAL VERSION
 % \usepackage{cvpr}              % To produce the CAMERA-READY version
-\usepackage[review,pagenumbers]{cvpr} % To force page numbers, \eg for an arXiv version
+\usepackage[pagenumbers]{cvpr} % To force page numbers, \eg for an arXiv version
 
 % Import additional packages in the preamble file, before hyperref
 \input{preamble}
@@ -20,7 +20,7 @@
 \newcommand{\superaffil}[2]{\textsuperscript{#1}\,#2}
 
 \author{
-  \small Jordy Van Landeghem\superaffil{1,2}
+\small Jordy Van Landeghem\superaffil{1}
   \and
   \footnotesize{
     \textsuperscript{1}KU Leuven
@@ -34,9 +34,9 @@
 This report presents the results of the arXiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a category-stratified training set of 2M papers and a validation set of 500K papers.
 
 First, I focused on establishing a discriminative encoder-based baseline for multi-label classification using BERT \cite{devlin2018bert}.
-I then experimented with different encoders (DeBERTa \cite{he2020deberta} (better encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates ($1e-4\to2e-5$), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
+I then experimented with different encoders (DeBERTa \cite{he2020deberta} (known to be a more powerful encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates ($1e-4\to2e-5$), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
 
-Out of interest, I also explored alternate approaches such as few-shot classification with a one-vs-rest strategy (SetFit \cite{tunstall2022efficient}) and generative models (Llama2 \cite{touvron2023llama}) instruction-tuned on human-readable labels. The report concludes with a discussion of future work.
+Out of interest, I also explored alternate approaches such as few-shot classification with a one-vs-rest strategy (SetFit \cite{tunstall2022efficient}) and generative models (Llama2 \cite{touvron2023llama}) instruction-tuned on human-readable labels. The report concludes with a discussion of future work. In total, I invested $<$20 hours in this task and mainly focused on prototyping and experimenting with different approaches at multi-label text classification.
 
 \noindent The key observations of this report are:
 \begin{enumerate}
@@ -48,16 +48,27 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 
 The notebook `EDA.ipynb` contains documentation and visualization of observations made on the arXiv dataset.
 
-The papers are classified into 176 categories, with a mean of 3.5 categories per paper. The distribution of the number of papers per category is highly skewed, with the top 10 categories accounting for 50\% of the papers.
+The papers are classified into X categories, with a mean of XXX categories per paper. The distribution of the number of papers per category is highly skewed. TBD: add more EDA results.
 
 The preprocessed dataset is available at \url{https://huggingface.co/datasets/jordyvl/arXiv_dataset_prep}. The dataset contains the following fields:
-\begin{itemize}[noitemsep]
+\begin{simplist}
   \item \textit{abstract}: without any preprocessing such as lemmatization, risky with many technical terms, could reduce overfitting when done right
   \item \textit{primary}: the primary category of the paper; could be used for multi-class classification
   \item \textit{categories}: the categories of the paper as a list of labels, \eg [cs.AI, eess.AS]; multi-label classification
   \item \textit{strlabel}: human-readable labels for the categories joined with ';', \eg [cs.AI, eess.AS]  $\to$ "Artificial Intelligence;Audio and Speech Processing"
-\end{itemize}
+\end{simplist}
 
+
+\section{Experiments}
+
+\subsection{Methods}
+
+Some motivation is due for the choice of alternate approaches than encoder-based discriminative models. The discriminative models are known to be powerful and are the current baselines of choice for multi-label classification. However, they are also known to be data-hungry, which is hard in the case of an imbalanced long-tailed label distribution as here, and require substantial fine-tuning to achieve good performance.
+
+A generative pre-trained LLM such as Llama2 \cite{touvron2023llama} is known to be more flexible and can be instruction tuned toward any task described in natural language with potentially fewer instances,
+while rendering a semantic understanding of the labels and even the ability to generate new labels. Given the higher computational cost involved with LLMs, I subsampled the dataset to 10\% of the original size to keep the computation time reasonable.
+
+SetFit \cite{tunstall2022efficient} is a few-shot classification framework for fine-tuning Sentence Transformers. It is substantially more data-efficient and can be trained with different multi-label strategies (one-vs-rest), which might be more robust to label noise and label imbalance. I opted for this setup, as in industry settings, supervised learning is often not feasible due to the lack of a large set of labeled data, and few-shot learning is a promising alternative. I created a new Sentence Transformer from SciBERT and used this to fine-tune the SetFit model.
 
 \subsection{Evaluation}
 
@@ -69,27 +80,28 @@ For example, the \ANLS of the generated labels "Audio and Speech Processing;Arti
 \section{Results}
 
 All results are reported on a test set subsampled from the validation set to keep computation time reasonable. The best attained results are reported in Table \ref{tab:results}.
+All experiment runs and results are available at \url{https://wandb.ai/jordy-vlan/scientific-text-classification}.
 
 \begin{table}[h]
   \centering
   \caption{Results}
   \label{tab:results}
-  \begin{tabular}{lcccc}
+\begin{tabular}{lccccc}
     \toprule
-    Model & Precision & Recall & F1 & Hamming Loss \\
+Model & Precision & Recall & F1 & Hamming Loss & ANLS \\
     \midrule
-    BERT                                           \\
-    DeBERTa                                        \\
-    SciBERT                                        \\
-    SetFit                                         \\
-    Llama2                                         \\
+BERT                                                  \\
+DeBERTa                                               \\
+SciBERT                                               \\
+SetFit                                                \\
+Llama2                                                \\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \section{Future Work}
 
-Of course, all the following depend on the needs of the task and the available resources.
+Of course, all the following depends on the needs of the task and the available resources.
 
 \begin{todolist}
 \item Hyperparameter tuning: extend MultiLabelTrainer with \href{https://huggingface.co/docs/transformers/en/hpo_train}{Optuna or Ray Tune or Wandb sweeps}
