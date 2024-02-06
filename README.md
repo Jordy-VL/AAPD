@@ -2,11 +2,11 @@
 
 Project for Lead Researcher position @iris.ai
 
-
 ## Research article classification
 
-All code under `src`
 Report under `report/main.pdf`
+
+All code under `src`
 
 ### Task
 
