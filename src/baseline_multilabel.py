@@ -154,8 +154,16 @@ def main():
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
     print("Example outputs to check:")
     subset = tokenized_dataset["test"].select(list(range(0, 100)))
-    print(trainer.predict(subset), "vs. GT: ", subset["labels"])  # to be logged for debugging purposes
 
+    preds = sigmoid(trainer.predict(subset))
+    predictions = (preds > 0.5).astype(int).reshape(-1)
+    references = subset["labels"].astype(int).reshape(-1)
+    # convert to classes
+
+    for i in range(len(subset)):
+        print(
+            f"P:{id2class[predictions[i]]} @{preds:{round(preds[i],2)}} vs. G:{id2class[references[i]]}"
+        )  # f'P:{predictions[i]} vs. G:{references[i]}'
 
 if __name__ == "__main__":
     main()

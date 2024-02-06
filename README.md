@@ -22,6 +22,10 @@ Total working time spent: 15h
 
 06/02 12-14h: implemented TwoWayLoss with custom HFTrainer and tested - will start final run with SciBERT (current best settings: 2e-5 lr, 64BS, 25K steps, requires >46GB GPU VRAM) [SYNC]
 
+    14-15h: boilerplated report
+
+
+    
 ## Research article classification
 
 ### Task
@@ -107,9 +111,14 @@ wandb:                    test/recall 0.46054
 
 See wandb report @ ...
 
-
-
 ### Reproduction
+
+reproduce.sh: script to reproduce the final run
+
+```sh
+bash reproduce.sh
+```
+
 
 ## Installation
 
@@ -127,9 +136,6 @@ poetry install
 ```
 
 ## Organization
-
-
-
 
 #### ongoing notes
 

@@ -16,7 +16,7 @@ CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name test_two
 --eval_steps 0.5 \
 --Tp 4.0 \
 --Tn 1.0 \
---criterion 'twowayloss' \
+--criterion 'TwoWayLoss' \
 
 """
 CUDA_VISIBLE_DEVICES=2 python3 baseline_zeroshot.py --experiment_name test_implementation \

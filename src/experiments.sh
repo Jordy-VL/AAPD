@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_25K_steps_bs64 \
+CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_twowayloss_25K_bs64 \
 --model_name_or_path 'allenai/scibert_scivocab_uncased' \
 --output_dir '../results' \
 --seed 42 \
@@ -16,7 +16,7 @@ CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_
 --eval_steps 0.2 
 --Tp 4.0 \
 --Tn 1.0 \
---criterion 'twowayloss' \
+--criterion 'TwoWayLoss' \
 
 '''
 ## server - higher batch size
