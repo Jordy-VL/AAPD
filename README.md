@@ -40,7 +40,7 @@ Arxiv dataset: (HF_datasets)[https://huggingface.co/datasets/arxiv_dataset/blob/
 
 #### EDA
 
-`EDA.ipynb`: hyperannotated with instructions
+`EDA.ipynb`: hyperannotated with commentary
 
 ### Experiments
 
