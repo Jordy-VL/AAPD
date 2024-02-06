@@ -2,38 +2,11 @@
 
 Project for Lead Researcher position @iris.ai
 
-#### Time spent
-
-Total working time spent: 15h
-
-31/01 14-16h: initial task setup - EDA
-
-02/02 20-22h: EDA + preprocessing [SYNC]
-
-04/02 
-    
-    08-11h: baseline_multilabel setup - implementation testing
-
-    17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
-
-    20-21u: implementation of zero/few-shot classification and generative models for instruction tuning (to be tested) [SYNC]
-
-05/02 
-    
-    13-15h: patch for stringlabels in HF datasets [SYNC]
-
-    22-23h: testing zero/few-shot classification and generative models for instruction tuning  [SYNC] 
-
-06/02 
-    
-    12-14h: implemented TwoWayLoss with custom HFTrainer and tested - will start final run with SciBERT (current best settings: 2e-5 lr, 64BS, 25K steps, requires >46GB GPU VRAM) [SYNC]
-
-    14-15h: boilerplated report
-
-    19-20h: finalizing report - to fill in results
-
 
 ## Research article classification
+
+All code under `src`
+Report under `report/main.pdf`
 
 ### Task
 
@@ -108,10 +81,36 @@ reproduce.sh: script to reproduce the final run
 bash reproduce.sh
 ```
 
-
 ## Organization
 
-#### ongoing notes
+#### Time spent
 
-1. try HF loader first, then bother with installation and EDA
-2. Go for baseline first fast, then try to improve
+Total working time spent: 15h
+
+31/01 14-16h: initial task setup - EDA
+
+02/02 20-22h: EDA + preprocessing [SYNC]
+
+04/02 
+    
+    08-11h: baseline_multilabel setup - implementation testing
+
+    17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
+
+    20-21u: implementation of zero/few-shot classification and generative models for instruction tuning (to be tested) [SYNC]
+
+05/02 
+    
+    13-15h: patch for stringlabels in HF datasets [SYNC]
+
+    22-23h: testing zero/few-shot classification and generative models for instruction tuning  [SYNC] 
+
+06/02 
+    
+    12-14h: implemented TwoWayLoss with custom HFTrainer and tested - will start final run with SciBERT (current best settings: 2e-5 lr, 64BS, 25K steps, requires >46GB GPU VRAM) [SYNC]
+
+    14-15h: boilerplated report
+
+    19-20h: finalizing report - to fill in results
+
+
