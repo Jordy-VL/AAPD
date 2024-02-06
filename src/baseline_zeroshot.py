@@ -56,7 +56,6 @@ def main():
         tags=["zero-shot"],
         config={k: v for k, v in args.__dict__.items() if v is not None},
     )
-
     training_args = TrainingArguments(
         output_dir=os.path.join(args.output_dir, args.experiment_name),
         max_steps=args.max_steps,
@@ -77,7 +76,6 @@ def main():
     dataset = load_dataset("jordyvl/arxiv_dataset_prep")
     classes = sorted(set([c.strip() for cats in dataset["train"]["strlabel"] for c in cats.split(";")]))
     class2id = {class_: id for id, class_ in enumerate(classes)}
-    id2class = {id: class_ for class_, id in class2id.items()}
 
     print(f"Classes: {len(classes)}")
 
@@ -86,12 +84,19 @@ def main():
         "abstract", "text"
     )
 
-    #'jordyvl/scibert_scivocab_uncased_sentence_transformer'
+    # DEV: https://github.com/huggingface/setfit/issues/472 cannot use whole dataset due to memory issues; raised ticket
+    ## numpy.core._exceptions._ArrayMemoryError: Unable to allocate 3.72 TiB for an array with shape (2022879, 2022879) and data type bool
+    ## related to https://stackoverflow.com/questions/40617199/generate-n-choose-2-combinations-in-python-on-very-large-data-sets
+    ## backoff solution: subsample training data to 5% of the original size
+    dataset["train"] = dataset["train"].select(
+        list(range(0, 0.05 * len(dataset["train"])))
+    )  # permuted by default from train test split
+
     model = SetFitModel.from_pretrained(
         args.sentence_transformer,
         multi_target_strategy=args.multi_target_strategy,
         use_differentiable_head=args.use_differentiable_head,
-        # labels=classes,
+        labels=classes,
     )
 
     # Create trainer
@@ -99,11 +104,10 @@ def main():
         args=training_args,
         model=model,
         train_dataset=dataset["train"],
-        eval_dataset=dataset["test"],
-        metric="f1",
+        eval_dataset=dataset["simple_validation"],
+        metric="f1",  # DEV: no evaluate.compute metrics availability, TODO: custom compute_metrics and evaluation loop
         metric_kwargs={"average": "micro"},
     )
-    # num_iterations=5,  # Number of text pairs to generate for contrastive learning
 
     try:
         train_results = trainer.train()
@@ -112,7 +116,9 @@ def main():
     except KeyboardInterrupt as e:
         print(e)
 
-    zeroshot_metrics = trainer.evaluate(eval_dataset=dataset["test"], metric_key_prefix="test")
+    zeroshot_metrics = trainer.evaluate(
+        eval_dataset=dataset["test"].select(list(range(0, 10000))), metric_key_prefix="test"
+    )
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
 
 

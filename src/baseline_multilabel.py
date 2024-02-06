@@ -12,12 +12,18 @@ __version__ = "3.0"
 import os
 import numpy as np
 from argparse import Namespace
-from datasets import load_dataset, load_from_disk, ClassLabel, Sequence
+from datasets import load_dataset, ClassLabel, Sequence
 from transformers import AutoTokenizer, HfArgumentParser, DataCollatorWithPadding
-from transformers import AutoModelForSequenceClassification, TrainingArguments, Trainer
+from transformers import AutoModelForSequenceClassification, TrainingArguments
 import wandb
 import evaluate
-from myutils import CustomArguments, seed_everything, preprocess_function
+from myutils import (
+    CustomArguments,
+    seed_everything,
+    preprocess_function,
+    MultiLabelTrainingArguments,
+    MultiLabelTrainer,
+)
 
 
 def sigmoid(x):
@@ -31,6 +37,7 @@ def hamming_loss(y_true, y_pred):
 clf_metrics = evaluate.combine(["accuracy", "precision", "recall", "f1"])
 
 # DEV:  port mAP for classes and instances from https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py ?
+
 
 def compute_metrics(eval_pred):
     predictions, labels = eval_pred
@@ -93,7 +100,12 @@ def main():
         problem_type="multi_label_classification",
     )
 
-    training_args = TrainingArguments(
+    training_args = MultiLabelTrainingArguments(
+        # new
+        criterion=args.criterion,
+        Tp=args.Tp,
+        Tn=args.Tn,
+        # old
         output_dir=os.path.join(args.output_dir, args.experiment_name),
         num_train_epochs=args.num_train_epochs,
         max_steps=args.max_steps,
@@ -118,7 +130,7 @@ def main():
         label_smoothing_factor=args.label_smoothing_factor,
     )
 
-    trainer = Trainer(
+    trainer = MultiLabelTrainer(
         model=model,
         args=training_args,
         train_dataset=tokenized_dataset["train"],
@@ -136,7 +148,7 @@ def main():
         print(e)
 
     subsample_test = tokenized_dataset["test"].select(list(range(0, 10000)))  # takes 30 minutes on desktop
-    trainer.evaluate(eval_dataset=subsample_test, metric_key_prefix="test")  # 20K samples is enough?
+    trainer.evaluate(eval_dataset=subsample_test, metric_key_prefix="test")  # 10K samples is enough?
 
     # print some example outputs
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")

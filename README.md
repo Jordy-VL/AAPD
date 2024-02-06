@@ -4,16 +4,23 @@ Project for Lead Researcher position @iris.ai
 
 #### Time spent
 
+Total working time spent: 15h
+
 31/01 14-16h: initial task setup - EDA
 
 02/02 20-22h: EDA + preprocessing [SYNC]
 
 04/02 08-11h: baseline_multilabel setup - implementation testing
+
     17-19u: implementation tested - status: working on baseline_multilabel [SYNC]
+
     20-21u: implementation of zero/few-shot classification and generative models for instruction tuning (to be tested) [SYNC]
 
 05/02 13-15h: patch for stringlabels in HF datasets [SYNC]
+
     22-23h: testing zero/few-shot classification and generative models for instruction tuning  [SYNC] 
+
+06/02 12-14h: implemented TwoWayLoss with custom HFTrainer and tested - will start final run with SciBERT (current best settings: 2e-5 lr, 64BS, 25K steps, requires >46GB GPU VRAM) [SYNC]
 
 ## Research article classification
 
@@ -23,7 +30,9 @@ Project for Lead Researcher position @iris.ai
 
 ### Papers
 
-- [A Survey on Extreme Multi-label Learning](link)
+- (DeBERTa)[https://openreview.net/forum?id=XPZIaotutsD] and (v3)[https://arxiv.org/abs/2111.09543]
+- (SciBERT)[https://aclanthology.org/D19-1371/]
+- (Two-way Multi-Label Loss)[https://openaccess.thecvf.com/content/CVPR2023/papers/Kobayashi_Two-Way_Multi-Label_Loss_CVPR_2023_paper.pdf]
 
 ### Data
 
@@ -31,7 +40,7 @@ Arxiv dataset: (HF_datasets)[https://huggingface.co/datasets/arxiv_dataset/blob/
 
 #### EDA
 
-
+`EDA.ipynb`: hyperannotated with instructions
 
 ### Experiments
 

@@ -352,6 +352,8 @@ def main():
     model = model.merge_and_unload()
     from tqdm import tqdm
 
+    # Do evaluation here manually
+
     pipe = pipeline(task="text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100)
     all_pred = []
     all_gt = []
