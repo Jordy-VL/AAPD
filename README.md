@@ -25,7 +25,6 @@ Total working time spent: 15h
     14-15h: boilerplated report
 
 
-    
 ## Research article classification
 
 ### Task
