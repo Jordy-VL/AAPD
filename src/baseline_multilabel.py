@@ -23,30 +23,9 @@ from myutils import (
     preprocess_function,
     MultiLabelTrainingArguments,
     MultiLabelTrainer,
+    sigmoid,
+    compute_metrics,
 )
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-def hamming_loss(y_true, y_pred):
-    return np.mean(y_true != y_pred)
-
-
-clf_metrics = evaluate.combine(["accuracy", "precision", "recall", "f1"])
-
-# DEV:  port mAP for classes and instances from https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py ?
-
-
-def compute_metrics(eval_pred):
-    predictions, labels = eval_pred
-    predictions = sigmoid(predictions)
-    predictions = (predictions > 0.5).astype(int).reshape(-1)
-    references = labels.astype(int).reshape(-1)
-    batch_metrics = clf_metrics.compute(predictions=predictions, references=references)
-    batch_metrics["hamming"] = hamming_loss(references, predictions)
-    return batch_metrics
 
 
 def main():

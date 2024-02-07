@@ -21,9 +21,10 @@ from transformers import (
     HfArgumentParser,
     TrainingArguments,
     pipeline,
-    logging,
     HfArgumentParser,
 )
+from tqdm import tqdm
+
 from peft import LoraConfig, PeftModel
 from trl import SFTTrainer
 from transformers import TrainingArguments
@@ -330,7 +331,7 @@ def main():
 
     # Save trained model
     trainer.model.save_pretrained(args.experiment_name)
-    trainer.evaluate(eval_dataset=dataset["test"].select(list(range(0, 5000))), metric_key_prefix="test")
+
     # Empty VRAM in case of training
     # del pipe
     del model
@@ -350,7 +351,6 @@ def main():
     )
     model = PeftModel.from_pretrained(base_model, args.experiment_name)
     model = model.merge_and_unload()
-    from tqdm import tqdm
 
     # Do evaluation here manually
 
@@ -374,6 +374,7 @@ def main():
     anls = ANLSL(all_gt, all_pred)
     print(f"Exact match accuracy: {accuracy}")
     print(f"ANLS: {anls}")
+    wandb.log({"test/accuracy": accuracy, "test/anls": anls})
 
 
 if __name__ == "__main__":

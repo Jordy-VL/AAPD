@@ -34,14 +34,14 @@
 This report presents the results of the arXiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a category-stratified training set of 2M papers and a validation set of 500K papers.
 
 First, I focused on establishing a discriminative encoder-based baseline for multi-label classification using BERT \cite{devlin2018bert}.
-I then experimented with different encoders (DeBERTa \cite{he2020deberta} (known to be a more powerful encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates ($1e-4\to2e-5$), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
+I then experimented with different encoders (DeBERTa \cite{he2020deberta} (known to be a more powerful encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates (1e-4$\to$2e-5), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
 
 Out of interest, I also explored alternate approaches such as few-shot classification with a one-vs-rest strategy (SetFit \cite{tunstall2022efficient}) and generative models (Llama2 \cite{touvron2023llama}) instruction-tuned on human-readable labels. The report concludes with a discussion of future work. In total, I invested $<$20 hours in this task and mainly focused on prototyping and experimenting with different approaches at multi-label text classification.
 
 \noindent The key observations of this report are:
 \begin{enumerate}
   [label=\Roman*.,leftmargin=2\parindent]
-  \item  Observations
+  \item  Observations TBD at the end of the project (ETA: 2024-02-07 EOD)
 \end{enumerate}
 
 \section{Exploratory Data Analysis}
@@ -75,7 +75,7 @@ SetFit \cite{tunstall2022efficient} is a few-shot classification framework for f
 The performance of the discriminative models is evaluated using standard metrics: \textit{precision, recall, micro-averaged F1 score, and hamming loss}.
 The generative models are evaluated using my own extended metric, \textit{Average Normalized Levenshtein Similarity} (\ANLS) \cite{VanLandeghem2023dude}, that evaluates the quality of the generated labels and the similarity to the human-readable labels, agnostic of the order of the labels and permissive to low edit distance on individual generated labels.
 
-For example, the \ANLS of the generated labels "Audio and Speech Processing;Artificial Intelligence" and the human-readable labels "Artificial Intelligence;Audio and Speech Processing" is 1.0, as well as for "Audio Processing;Artificial Intelligence" given an NLS threshold $\tau$ of 0.5. The threshold can be adapted to the task's needs, \eg to enforce a minimum similarity to the human-readable labels, such that they even incomplete ones could be reconstructed by surface form or semantic similarity (\eg Audio Processing is closest to Audio and Speech Processing of all other labels).
+For example, the \ANLS of the generated labels "Audio and Speech Processing;Artificial Intelligence" and the human-readable labels "Artificial Intelligence;Audio and Speech Processing" is 1.0, as well as for "Audio Processing;Artificial Intelligence" given an NLS threshold $\tau$ of 0.5. The threshold can be adapted to the task's needs, \eg to enforce a minimum similarity to the human-readable labels, such that even incomplete ones could be reconstructed by surface form or semantic similarity (\eg Audio Processing is closest to Audio and Speech Processing of all other labels).
 
 \section{Results}
 

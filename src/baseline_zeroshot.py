@@ -16,30 +16,16 @@ from transformers import HfArgumentParser
 from transformers import TrainingArguments as HFTrainingArguments
 import wandb
 import evaluate
-from myutils import CustomArguments, seed_everything, preprocess_zero_function
-
 from setfit import SetFitModel, Trainer, TrainingArguments
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-def hamming_loss(y_true, y_pred):
-    return np.mean(y_true != y_pred)
-
-
-clf_metrics = evaluate.combine(["accuracy", "precision", "recall", "f1"])
-
-
-def compute_metrics(eval_pred):
-    predictions, labels = eval_pred
-    predictions = sigmoid(predictions)
-    predictions = (predictions > 0.5).astype(int).reshape(-1)
-    references = labels.astype(int).reshape(-1)
-    batch_metrics = clf_metrics.compute(predictions=predictions, references=references)
-    batch_metrics["hamming"] = hamming_loss(references, predictions)
-    return batch_metrics
+from myutils import (
+    CustomArguments,
+    seed_everything,
+    preprocess_zero_function,
+    MultiLabelTrainingArguments,
+    MultiLabelTrainer,
+    sigmoid,
+    compute_metrics,
+)
 
 
 def main():
@@ -76,6 +62,7 @@ def main():
     dataset = load_dataset("jordyvl/arxiv_dataset_prep")
     classes = sorted(set([c.strip() for cats in dataset["train"]["strlabel"] for c in cats.split(";")]))
     class2id = {class_: id for id, class_ in enumerate(classes)}
+    id2class = {id: class_ for class_, id in class2id.items()}
 
     print(f"Classes: {len(classes)}")
 
@@ -89,7 +76,7 @@ def main():
     ## related to https://stackoverflow.com/questions/40617199/generate-n-choose-2-combinations-in-python-on-very-large-data-sets
     ## backoff solution: subsample training data to 5% of the original size
     dataset["train"] = dataset["train"].select(
-        list(range(0, int(0.05 * len(dataset["train"]))))
+        list(range(0, int(0.0005 * len(dataset["train"]))))  # TODO: reset to 5%
     )  # permuted by default from train test split
 
     model = SetFitModel.from_pretrained(
@@ -105,20 +92,38 @@ def main():
         model=model,
         train_dataset=dataset["train"],
         eval_dataset=dataset["simple_validation"],
-        metric="f1",  # DEV: no evaluate.compute metrics availability, TODO: custom compute_metrics and evaluation loop
-        metric_kwargs={"average": "micro"},
+        metric=compute_metrics,  # "f1",  # DEV: no evaluate.compute metrics availability, TODO: custom compute_metrics and evaluation loop
+        # metric_kwargs={"average": "micro"},
     )
-
     try:
         train_results = trainer.train()
-        trainer.log_metrics("train", train_results.metrics)
-        trainer.save_metrics("train", train_results.metrics)
     except KeyboardInterrupt as e:
         print(e)
+    outputs = trainer.evaluate(dataset["test"].select(list(range(0, 2))))
 
-    zeroshot_metrics = trainer.evaluate(
-        eval_dataset=dataset["test"].select(list(range(0, 10000))), metric_key_prefix="test"
-    )
+    from pdb import set_trace
+
+    set_trace()
+
+    subsample_test = dataset["test"].select(list(range(0, 10000)))  # takes 30 minutes on desktop
+
+    trainer.evaluate(eval_dataset=subsample_test, metric_key_prefix="test")  # 10K samples is enough?
+
+    # print some example outputs
+    trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
+    print("Example outputs to check:")
+    subset = subsample_test.select(list(range(0, 100)))
+
+    preds = sigmoid(trainer.predict(subset))
+    predictions = (preds > 0.5).astype(int).reshape(-1)
+    references = subset["labels"].astype(int).reshape(-1)
+
+    # convert to classes
+    for i in range(len(subset)):
+        print(
+            f"P:{id2class[predictions[i]]} @{preds:{round(preds[i],2)}} vs. G:{id2class[references[i]]}"
+        )  # f'P:{predictions[i]} vs. G:{references[i]}'
+
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
 
 
