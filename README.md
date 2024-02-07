@@ -46,10 +46,10 @@ Alternate approaches:
 - Hamming loss
 
 TODO:
-- [ ] report ANLS in wandb (might be a single run given time to be spent)
-- [ ] port metrics mAP (classwise) and mAP (samplewise) from (repo)[https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py]
-- [ ] reproduction test and scripts
-- [ ] imports in pyproject.toml
+- [X] reproduction test and scripts
+- [X] changed imports to conda environment yml
+- [WONTDO] report ANLS in wandb (might be a single run given time to be spent)
+- [WONTDO] port metrics mAP (classwise) and mAP (samplewise) from (repo)[https://github.com/tk1980/TwoWayMultiLabelLoss/blob/main/utils/utils.py]
 
 
 ## Results/Report
@@ -58,34 +58,27 @@ See wandb report @ https://wandb.ai/jordy-vlan/scientific-text-classification
 
 ### Reproduction
 
+To reproduce the results of the report, one can run the commands of the models in wandb.
+For example, to reproduce the results of the ((current) best reported model)[https://wandb.ai/jordy-vlan/scientific-text-classification/runs/zk81z3qc/overview?workspace=user-jordy-vlan], one can run the following command:
+
+```bash
+python src/baseline_multilabel.py --experiment_name SciBERT_twowayloss_25K_bs64 --model_name_or_path allenai/scibert_scivocab_uncased --output_dir ../results --seed 42 --evaluation_strategy steps --per_device_train_batch_size 64 --gradient_accumulation_steps 1 --learning_rate 2e-5 --num_train_epochs 1 --max_steps 25000 --logging_strategy steps --logging_steps 0.05 --save_steps 0.2 --eval_steps 0.2 --criterion TwoWayLoss --Tp 4.0 --Tn 1.0
+```
 
 #### Installation
 
-The scripts require [python >= 3.8](https://www.python.org/downloads/release/python-380/) to run.
-We will create a fresh [virtualenvironment](https://virtualenvwrapper.readthedocs.io/en/latest/install.html) in which to install all required packages.
-```sh
-mkvirtualenv -p /usr/bin/python3 AAPD
-```
+The scripts require [python >= 3.8](https://www.python.org/downloads/release/python-380/) to run and a conda environment with the following packages:
 
-Using poetry and the readily defined pyproject.toml, we will install all required packages
-```sh
-workon AAPD 
-pip3 install poetry
-poetry install
-```
-
-
-reproduce.sh: script to reproduce the final run
-
-```sh
-bash reproduce.sh
+```bash
+    conda env create -f environment.yml  # creates the environment
+    conda activate aapd  # activates the environment
 ```
 
 ## Organization
 
 #### Time spent
 
-Total working time spent: 15h
+Total working time spent: 17h
 
 31/01 14-16h: initial task setup - EDA
 
@@ -113,4 +106,6 @@ Total working time spent: 15h
 
     19-20h: finalizing report - to fill in results
 
+07/02 
 
+    14-16h: fixed LLM evaluation - SetFit training slowly, issues in evaluation with SetFitTrainer

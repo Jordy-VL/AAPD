@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_twowayloss_25K_bs64 \
+python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64 \
 --model_name_or_path 'allenai/scibert_scivocab_uncased' \
 --output_dir '../results' \
 --seed 42 \
@@ -13,7 +13,7 @@ CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_
 --logging_strategy steps \
 --logging_steps 0.05 \
 --save_steps 0.2 \
---eval_steps 0.2 
+--eval_steps 0.2 \
 --Tp 4.0 \
 --Tn 1.0 \
 --criterion 'TwoWayLoss' \

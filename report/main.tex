@@ -20,7 +20,7 @@
 \newcommand{\superaffil}[2]{\textsuperscript{#1}\,#2}
 
 \author{
-\small Jordy Van Landeghem\superaffil{1}
+  \small Jordy Van Landeghem\superaffil{1}
   \and
   \footnotesize{
     \textsuperscript{1}KU Leuven
@@ -34,7 +34,7 @@
 This report presents the results of the arXiv Scientific Text Classification task. The goal of this task is to classify scientific papers into one or more categories based on the paper's abstract. The dataset consists of +2.5M papers, which are split into a category-stratified training set of 2M papers and a validation set of 500K papers.
 
 First, I focused on establishing a discriminative encoder-based baseline for multi-label classification using BERT \cite{devlin2018bert}.
-I then experimented with different encoders (DeBERTa \cite{he2020deberta} (known to be a more powerful encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates (1e-4$\to$2e-5), and loss functions (binary cross-entropy vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
+I then experimented with different encoders (DeBERTa \cite{he2020deberta} (known to be a more powerful encoder), SciBERT \cite{maheshwari2021scibert} (in-domain pretraining)), batch sizes (6$\to$64). learning rates (1e-4$\to$2e-5), and loss functions (binary cross-entropy (CE) vs. two-way multi-label loss \cite{kobayashi2023two}) to improve the model's performance.
 
 Out of interest, I also explored alternate approaches such as few-shot classification with a one-vs-rest strategy (SetFit \cite{tunstall2022efficient}) and generative models (Llama2 \cite{touvron2023llama}) instruction-tuned on human-readable labels. The report concludes with a discussion of future work. In total, I invested $<$20 hours in this task and mainly focused on prototyping and experimenting with different approaches at multi-label text classification.
 
@@ -48,7 +48,7 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 
 The notebook `EDA.ipynb` contains documentation and visualization of observations made on the arXiv dataset.
 
-The papers are classified into X categories, with a mean of XXX categories per paper. The distribution of the number of papers per category is highly skewed. TBD: add more EDA results.
+The papers are classified into 149 unique categories with a frequency larger than 10 and with a human-readable label available in the \href{https://arxiv.org/category_taxonomy}{arXiv category taxonomy}, with a mean of 1.6958 categories per paper. The distribution of the number of papers per category is highly skewed. TBD: add more EDA results.
 
 The preprocessed dataset is available at \url{https://huggingface.co/datasets/jordyvl/arXiv_dataset_prep}. The dataset contains the following fields:
 \begin{simplist}
@@ -70,6 +70,8 @@ while rendering a semantic understanding of the labels and even the ability to g
 
 SetFit \cite{tunstall2022efficient} is a few-shot classification framework for fine-tuning Sentence Transformers. It is substantially more data-efficient and can be trained with different multi-label strategies (one-vs-rest), which might be more robust to label noise and label imbalance. I opted for this setup, as in industry settings, supervised learning is often not feasible due to the lack of a large set of labeled data, and few-shot learning is a promising alternative. I created a new Sentence Transformer from SciBERT and used this to fine-tune the SetFit model.
 
+I also experimented with different loss functions, such as the two-way multi-label loss \cite{kobayashi2023two}, which was reported to outperform other known loss functions (focal loss, assymmetric loss, \ldots) on the multi-label classfication task. It is inspired by the properties of softmax-based CE (as opposed to sigmoid binary CE) and contrastive learning over samples and labels.
+
 \subsection{Evaluation}
 
 The performance of the discriminative models is evaluated using standard metrics: \textit{precision, recall, micro-averaged F1 score, and hamming loss}.
@@ -81,26 +83,27 @@ For example, the \ANLS{} of the generated labels "Audio and Speech Processing;Ar
 
 All results are reported on a test set subsampled from the validation set to keep computation time reasonable. The best attained results are reported in Table \ref{tab:results}.
 All experiment runs and results are available at \url{https://wandb.ai/jordy-vlan/scientific-text-classification}.
+%All trained models are published on the Hugging Face model hub at \url{https://huggingface.co/jordyvl}.
 
 \begin{table}[h]
   \centering
-\caption{Results of the different models (trained with different number of steps based on loss curve validation) on the test set. The hamming loss is minimized, while other metrics are maximized.}
+  \caption{Results of the different models (trained with different number of steps based on loss curve validation) on the test set. The hamming loss is minimized, while other metrics are maximized.}
   \label{tab:results}
-\npdecimalsign{.}
-\nprounddigits{3}
-\begin{tabular}{l|n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}}
+  \npdecimalsign{.}
+  \nprounddigits{3}
+  \begin{tabular}{l|n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}n{1}{4}}
     \toprule
-\text{Model} & \text{Accuracy} & \text{Precision} & \text{Recall} & \text{F1} & \text{Hamming}($\downarrow$) & \text{ANLS} \\
+    \text{Model}            & \text{Accuracy}                & \text{Precision}               & \text{Recall}                  & \text{F1}                       & \text{Hamming}($\downarrow$)   & \text{ANLS}        \\
     \midrule
-BERT(10K) &   0.993458787878788 & 0.776191475960529 & 0.460541887262535 & 0.578085297681873 & 0.006541212121212 &  \\
-BERT & 0.993458787878788	& 0.776191475960529& 	0.460541887262535& 	0.578085297681873& 0.006541212121212 	 & \\
-DeBERTa (50K)   & 0.993986060606061	 & 0.763045337895637 & 	0.554967958688484	 & 0.642581853546086	 & 0.006013939393939 & \\
-SciBERT  	 & 0.994064242424242 &	0.796655012756307 &	0.524544266782803 &	0.632578031212485 &	0.005935757575758 \\
-SciBERT (2-way) & 0.994387272727273 &	0.790564750042655	 & 0.576556958875132	& 0.666810577441986 &	0.005612727272727 & \\
-SciBERT*(100K) 	 & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349	 &	{\npboldmath}0.626907505450016		 & {\npboldmath} 0.694904722452361		 & {\npboldmath}0.005356363636364 	 &\\
-SetFit (ovr@20)                                               \\
-SetFit (ovr-diff@20)                                               \\
-Llama2                                              &&&&&& 0.6071428571428571  \\
+    BERT(10K)               & 0.993458787878788              & 0.776191475960529              & 0.460541887262535              & 0.578085297681873               & 0.006541212121212              &                    \\
+    BERT                    & 0.993458787878788              & 0.776191475960529              & 0.460541887262535              & 0.578085297681873               & 0.006541212121212              &                    \\
+    DeBERTa (50K)           & 0.993986060606061              & 0.763045337895637              & 0.554967958688484              & 0.642581853546086               & 0.006013939393939              &                    \\
+    SciBERT                 & 0.994064242424242              & 0.796655012756307              & 0.524544266782803              & 0.632578031212485               & 0.005935757575758                                   \\
+    SciBERT (2-way)         & 0.994387272727273              & 0.790564750042655              & 0.576556958875132              & 0.666810577441986               & 0.005612727272727              &                    \\
+    \textit{SciBERT*(100K)} & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349 & {\npboldmath}0.626907505450016 & {\npboldmath} 0.694904722452361 & {\npboldmath}0.005356363636364 &                    \\
+    SetFit (ovr@20)                                                                                                                                                                                                    \\
+    SetFit (ovr-diff@20)                                                                                                                                                                                               \\
+    Llama2                  &                                &                                &                                &                                 &                                & 0.6071428571428571 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -110,17 +113,20 @@ Llama2                                              &&&&&& 0.6071428571428571  \
 Of course, all the following depends on the needs of the task and the available resources.
 
 \begin{todolist}
-\item Hyperparameter tuning: extend MultiLabelTrainer with \href{https://huggingface.co/docs/transformers/en/hpo_train}{Optuna or Ray Tune or Wandb sweeps}
-\item Feature fusion from arXiv metadata (\eg authors (co-citation network), date of submission)
-\item Ensembling of different pre-trained models (\eg BERT, DeBERTa, SciBERT, SetFit, Llama2), potentially weighted by normalized validation scores
-\item Combine predictive models with different output spaces (\eg multi-label, multi-class) to enforce consistency on the primary category and average label cardinality
-\item Continue with \textbf{encoder-decoder models} for multi-label classification (\eg T5Enc \cite{kementchedjhieva2023exploration})
-\begin{itemize}
-  \item Comment: overkill for single task finetuning, could be useful when combining multiple tasks (summarization, translation, classification, \ldots)
-\end{itemize}
-\item Design different prompts with function calling for postprocessing the output of LLMs (\eg JSON structure for unique classes)
-\item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
-\item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
+  \item \textbf{Hyperparameter tuning}: extend MultiLabelTrainer with \href{https://huggingface.co/docs/transformers/en/hpo_train}{Optuna or Ray Tune or Wandb sweeps}
+  \item \textbf{Feature fusion} from arXiv metadata (\eg authors (co-citation network), date of submission)
+  \item \textbf{Ensembling} of different pre-trained models (\eg BERT, DeBERTa, SciBERT, SetFit, Llama2), potentially weighted by normalized validation scores
+  \begin{itemize}
+    \item Combine predictive models with \textbf{different output spaces} (\eg multi-label, multi-class) to enforce consistency on the primary category and average label cardinality 
+  \end{itemize}
+  \item Continue with \textbf{encoder-decoder models} for multi-label classification (\eg SGM \cite{syang2018sgm} T5Enc \cite{kementchedjhieva2023exploration})
+  \begin{itemize}
+    \item Comment: overkill for single task finetuning, could be useful when combining multiple tasks (summarization, translation, classification, \ldots)
+  \end{itemize}
+  \item More advanced \textbf{prompt design} with function calling for postprocessing the output of LLMs (\eg JSON structure for unique classes)
+  \item Further explore the SetFit framework for few-shot multi-label classification, albeit it is admittedly not well-designed for this task and might require substantial adaptation
+  \item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
+  \item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
 \end{todolist}
 
 %%%%%%%%% REFERENCES
