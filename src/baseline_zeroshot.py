@@ -119,8 +119,6 @@ def main():
             f"P:{id2class[predictions[i]]} @{preds:{round(preds[i],2)}} vs. G:{id2class[references[i]]}"
         )  # f'P:{predictions[i]} vs. G:{references[i]}'
 
-    trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
-
 
 if __name__ == "__main__":
     main()
