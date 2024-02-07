@@ -100,7 +100,7 @@ SciBERT (2-way) & 0.994387272727273 &	0.790564750042655	 & 0.576556958875132	& 0
 SciBERT*(100K) 	 & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349	 &	{\npboldmath}0.626907505450016		 & {\npboldmath} 0.694904722452361		 & {\npboldmath}0.005356363636364 	 &\\
 SetFit (ovr@20)                                               \\
 SetFit (ovr-diff@20)                                               \\
-Llama2                                                \\
+Llama2                                              &&&&& 0.6071428571428571  \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -118,6 +118,7 @@ Of course, all the following depends on the needs of the task and the available 
 \begin{itemize}
   \item Comment: overkill for single task finetuning, could be useful when combining multiple tasks (summarization, translation, classification, \ldots)
 \end{itemize}
+\item Design different prompts with function calling for postprocessing the output of LLMs (\eg JSON structure for unique classes)
 \item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
 \item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
 \end{todolist}

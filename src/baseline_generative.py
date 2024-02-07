@@ -95,9 +95,18 @@ def get_best_matches_hungarian_munkers(anchor_list, matching_list, threshold=0.5
     return match_dict, match_matrix
 
 
-def ANLSL(gt_list, pred_list, threshold=0.5) -> float:
-    gt_list = [x.split(";") for x in gt_list]
-    pred_list = [x.split(";") for x in gt_list]
+def split_unique_original_order(lst):
+    splitted = [x.split(";") for x in lst]
+    for i, cats in enumerate(splitted):
+        seen = []
+        for cat in cats:
+            if cat not in seen:
+                seen.append(cat)
+        splitted[i] = seen
+    return splitted
+
+
+def NLSL(gt_list, pred_list, threshold=0.5) -> float:
     if len(gt_list) < len(pred_list):
         anchor_list, matching_list = gt_list, pred_list
 
@@ -114,6 +123,12 @@ def ANLSL(gt_list, pred_list, threshold=0.5) -> float:
     NLSL = np.sum(values) / num_answers
 
     return NLSL
+
+
+def ANLSL(gt_list, pred_list, threshold=0.5) -> float:
+    gt_list = split_unique_original_order(gt_list)
+    pred_list = split_unique_original_order(pred_list)
+    return np.mean([ANLS(gt, pred, threshold=threshold) for gt, pred in zip(gt_list, pred_list)])
 
 
 def compute_metrics(eval_pred):
@@ -361,12 +376,7 @@ def main():
         prompt = example["instruction"].split("Response:")[0] + "Response:"
         pred = pipe(prompt)[0]["generated_text"]  # output entity is max size 100?
         pred = pred.strip()[len(prompt) :]
-        # try to parse the dict out of there
 
-        try:
-            pred = pred.split("}")[0] + "}"
-        except Exception as e:
-            print("not a valid JSON structure returned", pred)
         all_pred.append(pred)
         all_gt.append(str(example["gt"]))
 
