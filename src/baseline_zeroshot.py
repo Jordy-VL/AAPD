@@ -84,7 +84,7 @@ def main():
     samples = random.sample(range(len(dataset["train"])), 10000)
     validation_samples = random.sample(range(len(dataset["simple_validation"])), 2000)
     test_samples = list(range(0, 10000))
-    samples = validation_samples = test_samples = list(range(10))  # debugging
+    # samples = validation_samples = test_samples = list(range(10))  # debugging
     dataset["train"] = dataset["train"].select(samples)
     dataset["simple_validation"] = dataset["simple_validation"].select(validation_samples)
     subsample_test = dataset["test"].select(test_samples)
@@ -95,6 +95,8 @@ def main():
         use_differentiable_head=args.use_differentiable_head,
         labels=classes,
     )
+
+    model = model.to("cuda")
 
     # Create trainer
     trainer = Trainer(
@@ -110,10 +112,12 @@ def main():
     except KeyboardInterrupt as e:
         print(e)
 
-    trainer.evaluate(subsample_test, metric_key_prefix="test")  # 10K samples is enough?
+    res = trainer.evaluate(subsample_test, metric_key_prefix="test")  # 10K samples is enough?
+    print(res)
+    wandb.log({f"test/{k}": v for k, v in res.items()})
 
     # print some example outputs
-    trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
+    trainer.push_to_hub(f"jordyvl/{args.experiment_name}")
     print("Example outputs to check:")
     subset = subsample_test.select(list(range(0, 100)))
 
