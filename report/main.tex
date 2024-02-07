@@ -41,14 +41,16 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 \noindent The key observations of this report are:
 \begin{enumerate}
   [label=\Roman*.,leftmargin=2\parindent]
-  \item  Observations TBD at the end of the project (ETA: 2024-02-07 EOD)
+\item Multi-label classification with a large dataset is challenging due to label imbalance and label noise. More methods exist to deal with this for discriminative models, but few-shot learning and generative models are interesting alternatives.
+\item Certainly, the choice of pre-trained model and loss function is crucial for the performance of the model. The two-way multi-label loss function outperformed the baseline binary cross-entropy loss function. (TBC)
 \end{enumerate}
 
 \section{Exploratory Data Analysis}
 
 The notebook `EDA.ipynb` contains documentation and visualization of observations made on the arXiv dataset.
 
-The papers are classified into 149 unique categories with a frequency larger than 10 and with a human-readable label available in the \href{https://arxiv.org/category_taxonomy}{arXiv category taxonomy}, with a mean of 1.6958 categories per paper. The distribution of the number of papers per category is highly skewed. TBD: add more EDA results.
+The papers are classified into 149 unique categories with a frequency larger than 10 and with a human-readable label available in the \href{https://arxiv.org/category_taxonomy}{arXiv category taxonomy}, with a mean of 1.6958 categories per paper. The distribution of the number of papers per category is highly skewed.
+As part of the preprocessing, all non-unique titles were removed and outlier abstracts (length $<$ 100 or $>$ 1000) were removed. Using `langdetect' I found that the abstracts were predominantly in English, which informs the choice of pretrained models. The dataset is highly imbalanced, with a long-tailed distribution of the number of papers per category. To enable stratified validation and test splits, I bucketed all multi-label categories together that had less than 10 papers.
 
 The preprocessed dataset is available at \url{https://huggingface.co/datasets/jordyvl/arXiv_dataset_prep}. The dataset contains the following fields:
 \begin{simplist}
@@ -128,7 +130,7 @@ Of course, all the following depends on the needs of the task and the available 
   \item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
   \item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
 \end{todolist}
-
+ 
 %%%%%%%%% REFERENCES
 {\small
 \bibliographystyle{ieeenat_fullname}
