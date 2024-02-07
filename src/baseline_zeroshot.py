@@ -99,11 +99,6 @@ def main():
         train_results = trainer.train()
     except KeyboardInterrupt as e:
         print(e)
-    outputs = trainer.evaluate(dataset["test"].select(list(range(0, 2))))
-
-    from pdb import set_trace
-
-    set_trace()
 
     subsample_test = dataset["test"].select(list(range(0, 10000)))  # takes 30 minutes on desktop
 

@@ -132,9 +132,9 @@ def main():
     # print some example outputs
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
     print("Example outputs to check:")
-    subset = tokenized_dataset["test"].select(list(range(0, 100)))
+    subset = subsample_test.select(list(range(0, 100)))
 
-    preds = sigmoid(trainer.predict(subset))
+    preds = sigmoid(trainer.predict(subset).predictions)
     predictions = (preds > 0.5).astype(int).reshape(-1)
     references = subset["labels"].astype(int).reshape(-1)
     # convert to classes
