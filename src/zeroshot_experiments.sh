@@ -1,6 +1,6 @@
 #!/bin/bash 
 
-CUDA_VISIBLE_DEVICES=2 python3 baseline_zeroshot.py --experiment_name test_implementation \
+CUDA_VISIBLE_DEVICES=0 python3 baseline_zeroshot.py --experiment_name test_implementation \
 --sentence_transformer 'jordyvl/scibert_scivocab_uncased_sentence_transformer' \
 --output_dir '../results' \
 --seed 42 \
@@ -17,7 +17,7 @@ CUDA_VISIBLE_DEVICES=2 python3 baseline_zeroshot.py --experiment_name test_imple
 
 exit 1
 
-CUDA_VISIBLE_DEVICES=1 python3 baseline_zeroshot.py --experiment_name setfit_scibert_25K_20iter \
+CUDA_VISIBLE_DEVICES=1 python3 baseline_zeroshot.py --experiment_name setfit_scibert_25K_1iter \
 --sentence_transformer 'jordyvl/scibert_scivocab_uncased_sentence_transformer' \
 --output_dir '../results' \
 --seed 42 \

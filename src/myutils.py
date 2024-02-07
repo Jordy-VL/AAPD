@@ -108,6 +108,16 @@ def compute_metrics(eval_pred):
     return batch_metrics
 
 
+def setfit_compute_metrics(predictions, labels, **metric_kwargs):
+    predictions = predictions.numpy()
+    labels = np.array(labels)
+    predictions = sigmoid(predictions)
+    predictions = (predictions > 0.5).astype(int).reshape(-1)
+    references = labels.astype(int).reshape(-1)
+    batch_metrics = clf_metrics.compute(predictions=predictions, references=references)
+    batch_metrics["hamming"] = hamming_loss(references, predictions)
+    return batch_metrics
+
 
 class TwoWayLoss(nn.Module):
     """

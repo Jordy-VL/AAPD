@@ -136,7 +136,7 @@ def main():
 
     preds = sigmoid(trainer.predict(subset).predictions)
     predictions = (preds > 0.5).astype(int).reshape(-1)
-    references = subset["labels"].astype(int).reshape(-1)
+    references = np.array(subset["labels"]).astype(int).reshape(-1)
     # convert to classes
 
     for i in range(len(subset)):

@@ -10,8 +10,9 @@ __version__ = "3.0"
 
 import os
 import numpy as np
+import random
 from argparse import Namespace
-from datasets import load_dataset, ClassLabel, Sequence
+from datasets import load_dataset
 from transformers import HfArgumentParser
 from transformers import TrainingArguments as HFTrainingArguments
 import wandb
@@ -24,7 +25,7 @@ from myutils import (
     MultiLabelTrainingArguments,
     MultiLabelTrainer,
     sigmoid,
-    compute_metrics,
+    setfit_compute_metrics,
 )
 
 
@@ -55,7 +56,7 @@ def main():
         save_total_limit=3,
         load_best_model_at_end=True,
         run_name=args.experiment_name,
-        num_iterations=20,
+        num_iterations=1,  # just once
     )
 
     ## Load the dataset and initialize the classes; https://github.com/huggingface/setfit/issues/226
@@ -71,13 +72,22 @@ def main():
         "abstract", "text"
     )
 
+    # do subsampling here already to avoid memory issues
+    ##
+
     # DEV: https://github.com/huggingface/setfit/issues/472 cannot use whole dataset due to memory issues; raised ticket
     ## numpy.core._exceptions._ArrayMemoryError: Unable to allocate 3.72 TiB for an array with shape (2022879, 2022879) and data type bool
     ## related to https://stackoverflow.com/questions/40617199/generate-n-choose-2-combinations-in-python-on-very-large-data-sets
-    ## backoff solution: subsample training data to 5% of the original size
-    dataset["train"] = dataset["train"].select(
-        list(range(0, int(0.0005 * len(dataset["train"]))))  # TODO: reset to 5%
-    )  # permuted by default from train test split
+    ## backoff solution: subsample training data to % of the original size
+
+    # sample a random 10K entries
+    samples = random.sample(range(len(dataset["train"])), 10000)
+    validation_samples = random.sample(range(len(dataset["simple_validation"])), 2000)
+    test_samples = list(range(0, 10000))
+    samples = validation_samples = test_samples = list(range(10))  # debugging
+    dataset["train"] = dataset["train"].select(samples)
+    dataset["simple_validation"] = dataset["simple_validation"].select(validation_samples)
+    subsample_test = dataset["test"].select(test_samples)
 
     model = SetFitModel.from_pretrained(
         args.sentence_transformer,
@@ -92,7 +102,7 @@ def main():
         model=model,
         train_dataset=dataset["train"],
         eval_dataset=dataset["simple_validation"],
-        metric=compute_metrics,  # "f1",  # DEV: no evaluate.compute metrics availability, TODO: custom compute_metrics and evaluation loop
+        metric=setfit_compute_metrics,  # "f1",  # DEV: no evaluate.compute metrics availability, TODO: custom setfit_compute_metrics and evaluation loop
         # metric_kwargs={"average": "micro"},
     )
     try:
@@ -100,9 +110,7 @@ def main():
     except KeyboardInterrupt as e:
         print(e)
 
-    subsample_test = dataset["test"].select(list(range(0, 10000)))  # takes 30 minutes on desktop
-
-    trainer.evaluate(eval_dataset=subsample_test, metric_key_prefix="test")  # 10K samples is enough?
+    trainer.evaluate(subsample_test, metric_key_prefix="test")  # 10K samples is enough?
 
     # print some example outputs
     trainer.push_to_hub(f"Saving best model of {args.experiment_name} to hub")
@@ -111,7 +119,7 @@ def main():
 
     preds = sigmoid(trainer.predict(subset))
     predictions = (preds > 0.5).astype(int).reshape(-1)
-    references = subset["labels"].astype(int).reshape(-1)
+    references = np.array(subset["labels"]).astype(int).reshape(-1)
 
     # convert to classes
     for i in range(len(subset)):
