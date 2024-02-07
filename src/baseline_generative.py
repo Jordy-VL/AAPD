@@ -96,8 +96,8 @@ def get_best_matches_hungarian_munkers(anchor_list, matching_list, threshold=0.5
 
 
 def ANLSL(gt_list, pred_list, threshold=0.5) -> float:
-    gt_list = gt_list.split(";")
-    pred_list = pred_list.split(";")
+    gt_list = [x.split(";") for x in gt_list]
+    pred_list = [x.split(";") for x in gt_list]
     if len(gt_list) < len(pred_list):
         anchor_list, matching_list = gt_list, pred_list
 
@@ -316,7 +316,7 @@ def main():
     trainer = SFTTrainer(
         model=model,
         train_dataset=dataset["train"],
-        eval_dataset=dataset["simple_validation"],
+        eval_dataset=dataset["simple_validation"].select(range(10)),
         peft_config=peft_config,
         dataset_text_field="instruction",
         max_seq_length=512,
@@ -357,11 +357,12 @@ def main():
     pipe = pipeline(task="text-generation", model=model, tokenizer=tokenizer, max_new_tokens=100)
     all_pred = []
     all_gt = []
-    for example in tqdm(dataset["test"]):
+    for example in tqdm(dataset["test"].select(list(range(0, 10)))):
         prompt = example["instruction"].split("Response:")[0] + "Response:"
         pred = pipe(prompt)[0]["generated_text"]  # output entity is max size 100?
         pred = pred.strip()[len(prompt) :]
         # try to parse the dict out of there
+
         try:
             pred = pred.split("}")[0] + "}"
         except Exception as e:

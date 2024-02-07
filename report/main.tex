@@ -75,7 +75,7 @@ SetFit \cite{tunstall2022efficient} is a few-shot classification framework for f
 The performance of the discriminative models is evaluated using standard metrics: \textit{precision, recall, micro-averaged F1 score, and hamming loss}.
 The generative models are evaluated using my own extended metric, \textit{Average Normalized Levenshtein Similarity} (\ANLS) \cite{VanLandeghem2023dude}, that evaluates the quality of the generated labels and the similarity to the human-readable labels, agnostic of the order of the labels and permissive to low edit distance on individual generated labels.
 
-For example, the \ANLS of the generated labels "Audio and Speech Processing;Artificial Intelligence" and the human-readable labels "Artificial Intelligence;Audio and Speech Processing" is 1.0, as well as for "Audio Processing;Artificial Intelligence" given an NLS threshold $\tau$ of 0.5. The threshold can be adapted to the task's needs, \eg to enforce a minimum similarity to the human-readable labels, such that even incomplete ones could be reconstructed by surface form or semantic similarity (\eg Audio Processing is closest to Audio and Speech Processing of all other labels).
+For example, the \ANLS{} of the generated labels "Audio and Speech Processing;Artificial Intelligence" and the human-readable labels "Artificial Intelligence;Audio and Speech Processing" is 1.0, as well as for "Audio Processing;Artificial Intelligence" given an NLS threshold $\tau$ of 0.5. The threshold can be adapted to the task's needs, \eg to enforce a minimum similarity to the human-readable labels, such that even incomplete ones could be reconstructed by surface form or semantic similarity (\eg Audio Processing is closest to Audio and Speech Processing of all other labels).
 
 \section{Results}
 
@@ -84,7 +84,7 @@ All experiment runs and results are available at \url{https://wandb.ai/jordy-vla
 
 \begin{table}[h]
   \centering
-\caption{Results of the different models on the test set. The hamming loss is minimized, while other metrics are maximized.}
+\caption{Results of the different models (trained with different number of steps based on loss curve validation) on the test set. The hamming loss is minimized, while other metrics are maximized.}
   \label{tab:results}
 \npdecimalsign{.}
 \nprounddigits{3}
@@ -94,9 +94,10 @@ All experiment runs and results are available at \url{https://wandb.ai/jordy-vla
     \midrule
 BERT(10K) &   0.993458787878788 & 0.776191475960529 & 0.460541887262535 & 0.578085297681873 & 0.006541212121212 &  \\
 BERT & 0.993458787878788	& 0.776191475960529& 	0.460541887262535& 	0.578085297681873& 0.006541212121212 	 & \\
-DeBERTa   & 0.993986060606061	 & 0.763045337895637 & 	0.554967958688484	 & 0.642581853546086	 & 0.006013939393939 & \\
-SciBERT 	 & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349	 &	{\npboldmath}0.626907505450016		 & {\npboldmath} 0.694904722452361		 & {\npboldmath}0.005356363636364 	 &\\
-SciBERT (2-way) 	 & \\
+DeBERTa (50K)   & 0.993986060606061	 & 0.763045337895637 & 	0.554967958688484	 & 0.642581853546086	 & 0.006013939393939 & \\
+SciBERT  	 & 0.994064242424242 &	0.796655012756307 &	0.524544266782803 &	0.632578031212485 &	0.005935757575758 \\
+SciBERT (2-way) & 0.994387272727273 &	0.790564750042655	 & 0.576556958875132	& 0.666810577441986 &	0.005612727272727 & \\
+SciBERT*(100K) 	 & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349	 &	{\npboldmath}0.626907505450016		 & {\npboldmath} 0.694904722452361		 & {\npboldmath}0.005356363636364 	 &\\
 SetFit (ovr@20)                                               \\
 SetFit (ovr-diff@20)                                               \\
 Llama2                                                \\
