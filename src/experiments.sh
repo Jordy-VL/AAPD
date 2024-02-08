@@ -1,6 +1,42 @@
 #!/bin/bash 
 
-CUDA_VISIBLE_DEVICES=1,3,4 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64 \
+CUDA_VISIBLE_DEVICES=0 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64_P2_N1 \
+--model_name_or_path 'allenai/scibert_scivocab_uncased' \
+--output_dir '../results' \
+--seed 42 \
+--evaluation_strategy steps \
+--per_device_train_batch_size 64 \
+--gradient_accumulation_steps 1 \
+--learning_rate 2e-5 \
+--num_train_epochs 1 \
+--max_steps 25000 \
+--logging_strategy steps \
+--logging_steps 0.05 \
+--save_steps 0.2 \
+--eval_steps 0.2 \
+--Tp 2.0 \
+--Tn 1.0 \
+--criterion 'TwoWayLoss' &
+
+CUDA_VISIBLE_DEVICES=1 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64_P1_N1 \
+--model_name_or_path 'allenai/scibert_scivocab_uncased' \
+--output_dir '../results' \
+--seed 42 \
+--evaluation_strategy steps \
+--per_device_train_batch_size 64 \
+--gradient_accumulation_steps 1 \
+--learning_rate 2e-5 \
+--num_train_epochs 1 \
+--max_steps 25000 \
+--logging_strategy steps \
+--logging_steps 0.05 \
+--save_steps 0.2 \
+--eval_steps 0.2 \
+--Tp 1.0 \
+--Tn 1.0 \
+--criterion 'TwoWayLoss' &
+
+CUDA_VISIBLE_DEVICES=2 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64_P4_N4 \
 --model_name_or_path 'allenai/scibert_scivocab_uncased' \
 --output_dir '../results' \
 --seed 42 \
@@ -15,8 +51,45 @@ CUDA_VISIBLE_DEVICES=1,3,4 python3 baseline_multilabel.py --experiment_name SciB
 --save_steps 0.2 \
 --eval_steps 0.2 \
 --Tp 4.0 \
---Tn 1.0 \
---criterion 'TwoWayLoss' \
+--Tn 4.0 \
+--criterion 'TwoWayLoss' &
+
+CUDA_VISIBLE_DEVICES=3 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64_P3_N2 \
+--model_name_or_path 'allenai/scibert_scivocab_uncased' \
+--output_dir '../results' \
+--seed 42 \
+--evaluation_strategy steps \
+--per_device_train_batch_size 64 \
+--gradient_accumulation_steps 1 \
+--learning_rate 2e-5 \
+--num_train_epochs 1 \
+--max_steps 25000 \
+--logging_strategy steps \
+--logging_steps 0.05 \
+--save_steps 0.2 \
+--eval_steps 0.2 \
+--Tp 3.0 \
+--Tn 2.0 \
+--criterion 'TwoWayLoss' &
+
+CUDA_VISIBLE_DEVICES=4 python3 baseline_multilabel.py --experiment_name SciBERT_TwoWayLoss_25K_bs64_P10_N5 \
+--model_name_or_path 'allenai/scibert_scivocab_uncased' \
+--output_dir '../results' \
+--seed 42 \
+--evaluation_strategy steps \
+--per_device_train_batch_size 64 \
+--gradient_accumulation_steps 1 \
+--learning_rate 2e-5 \
+--num_train_epochs 1 \
+--max_steps 25000 \
+--logging_strategy steps \
+--logging_steps 0.05 \
+--save_steps 0.2 \
+--eval_steps 0.2 \
+--Tp 10.0 \
+--Tn 5.0 \
+--criterion 'TwoWayLoss' &
+
 
 '''
 ## server - higher batch size
