@@ -42,7 +42,7 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 \begin{enumerate}
   [label=\Roman*.,leftmargin=2\parindent]
   \item Multi-label classification with a large dataset is challenging due to label imbalance and label noise. More methods exist to deal with this for discriminative models, but few-shot learning and generative models are interesting alternatives.
-  \item Certainly, the choice of pre-trained model and loss function is crucial for the performance of the model. The two-way multi-label loss function outperformed the baseline binary cross-entropy loss function. (TBC)
+\item Certainly, the choice of pre-trained model and loss function is crucial for the performance of the model. Contrary to the original research, the two-way multi-label loss function did not outperform the baseline binary cross-entropy loss function. I suspect this is due to either i) an implementation issue in their loss function that hinders convergence (\eg \href{https://github.com/tk1980/TwoWayMultiLabelLoss/issues/2}{this issue}), or ii) the long-tailed label distribution and the high label noise in this dataset that make it hard to tune the temperature parameters of the two-way multi-label loss function. I backtracked to a more battle-tested loss function, asymmetric loss \cite{ridnik2021asymmetric}, for which experiments are running.
 \end{enumerate}
 
 \section{Exploratory Data Analysis}
@@ -72,7 +72,7 @@ while rendering a semantic understanding of the labels and even the ability to g
 
 SetFit \cite{tunstall2022efficient} is a few-shot classification framework for fine-tuning Sentence Transformers. It is substantially more data-efficient and can be trained with different multi-label strategies (one-vs-rest), which might be more robust to label noise and label imbalance. I opted for this setup, as in industry settings, supervised learning is often not feasible due to the lack of a large set of labeled data, and few-shot learning is a promising alternative. I created a new Sentence Transformer from SciBERT and used this to fine-tune the SetFit model.
 
-I also experimented with different loss functions, such as the two-way multi-label loss \cite{kobayashi2023two}, which was reported to outperform other known loss functions (focal loss, assymmetric loss, \ldots) on the multi-label classfication task. It is inspired by the properties of softmax-based CE (as opposed to sigmoid binary CE) and contrastive learning over samples and labels.
+I also experimented with different loss functions, such as the two-way multi-label loss \cite{kobayashi2023two}, which was reported to outperform other known loss functions (focal loss, asymmetric loss, \ldots) on the multi-label classfication task. It is inspired by the properties of softmax-based CE (as opposed to sigmoid binary CE) and contrastive learning over samples and labels.
 
 \subsection{Evaluation}
 
