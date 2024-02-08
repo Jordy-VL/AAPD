@@ -141,7 +141,7 @@ def main():
 
     for i in range(len(subset)):
         print(
-            f"P:{id2class[predictions[i]]} @{preds:{np.round(preds[i],2)}} vs. G:{id2class[references[i]]}"
+            f"P:{id2class[predictions[i]]} @{preds:{preds[i]}} vs. G:{id2class[references[i]]}"
         )  # f'P:{predictions[i]} vs. G:{references[i]}'
 
 if __name__ == "__main__":
