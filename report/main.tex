@@ -41,8 +41,8 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 \noindent The key observations of this report are:
 \begin{enumerate}
   [label=\Roman*.,leftmargin=2\parindent]
-\item Multi-label classification with a large dataset is challenging due to label imbalance and label noise. More methods exist to deal with this for discriminative models, but few-shot learning and generative models are interesting alternatives.
-\item Certainly, the choice of pre-trained model and loss function is crucial for the performance of the model. The two-way multi-label loss function outperformed the baseline binary cross-entropy loss function. (TBC)
+  \item Multi-label classification with a large dataset is challenging due to label imbalance and label noise. More methods exist to deal with this for discriminative models, but few-shot learning and generative models are interesting alternatives.
+  \item Certainly, the choice of pre-trained model and loss function is crucial for the performance of the model. The two-way multi-label loss function outperformed the baseline binary cross-entropy loss function. (TBC)
 \end{enumerate}
 
 \section{Exploratory Data Analysis}
@@ -101,11 +101,12 @@ All experiment runs and results are available at \url{https://wandb.ai/jordy-vla
     BERT                    & 0.993458787878788              & 0.776191475960529              & 0.460541887262535              & 0.578085297681873               & 0.006541212121212              &                    \\
     DeBERTa (50K)           & 0.993986060606061              & 0.763045337895637              & 0.554967958688484              & 0.642581853546086               & 0.006013939393939              &                    \\
     SciBERT                 & 0.994064242424242              & 0.796655012756307              & 0.524544266782803              & 0.632578031212485               & 0.005935757575758                                   \\
-    SciBERT (2-way)         & 0.994387272727273              & 0.790564750042655              & 0.576556958875132              & 0.666810577441986               & 0.005612727272727              &                    \\
+    SciBERT (50K)           & 0.994387272727273              & 0.790564750042655              & 0.576556958875132              & 0.666810577441986               & 0.005612727272727              &                    \\
+    SciBERT (2-way)         %& 0.994387272727273              & 0.790564750042655              & 0.576556958875132              & 0.666810577441986               & 0.005612727272727              &                    \\
     \textit{SciBERT*(100K)} & {\npboldmath}0.994643636363636 & {\npboldmath}0.779447068845349 & {\npboldmath}0.626907505450016 & {\npboldmath} 0.694904722452361 & {\npboldmath}0.005356363636364 &                    \\
-    SetFit (ovr@20)                                                                                                                                                                                                    \\
-    SetFit (ovr-diff@20)                                                                                                                                                                                               \\
-    Llama2                  &                                &                                &                                &                                 &                                & 0.6071428571428571 \\
+    SetFit (ovr@1)          & 0.991046308724832              & 0.605021377240062              & 0.424984025559105              & 0.49926810043914                & 0.008953691275168              &                    \\
+    %SetFit (ovr-diff@20)                                                                                                                                                                                               \\
+    Llama2                  & 0                              &                                &                                &                                 &                                & 0.6071428571428571 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -113,13 +114,13 @@ All experiment runs and results are available at \url{https://wandb.ai/jordy-vla
 \section{Future Work}
 
 Of course, all the following depends on the needs of the task and the available resources.
-\small 
+\small
 \begin{todolist}
   \item \textbf{Hyperparameter tuning}: extend MultiLabelTrainer with \href{https://huggingface.co/docs/transformers/en/hpo_train}{Optuna or Ray Tune or Wandb sweeps}
   \item \textbf{Feature fusion} from arXiv metadata (\eg authors (co-citation network), date of submission)
   \item \textbf{Ensembling} of different pre-trained models (\eg BERT, DeBERTa, SciBERT, SetFit, Llama2), potentially weighted by normalized validation scores
   \begin{itemize}
-    \item Combine predictive models with \textbf{different output spaces} (\eg multi-label, multi-class) to enforce consistency on the primary category and average label cardinality 
+    \item Combine predictive models with \textbf{different output spaces} (\eg multi-label, multi-class) to enforce consistency on the primary category and average label cardinality
   \end{itemize}
   \item Continue with \textbf{encoder-decoder models} for multi-label classification (\eg SGM \cite{syang2018sgm} T5Enc \cite{kementchedjhieva2023exploration})
   \begin{itemize}
@@ -130,7 +131,7 @@ Of course, all the following depends on the needs of the task and the available 
   \item Investigate graph neural networks for better use of the \textbf{label hierarch}y (\eg in the medical domain \cite{chi2024graph})
   \item Explore strategies for dealing with \textbf{label noise} (\eg label smoothing, CleanLab \cite{kumar2020robust,oyen2022robustness})
 \end{todolist}
- 
+
 %%%%%%%%% REFERENCES
 {\small
 \bibliographystyle{ieeenat_fullname}
