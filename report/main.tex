@@ -50,7 +50,7 @@ Out of interest, I also explored alternate approaches such as few-shot classific
 The notebook `EDA.ipynb` contains documentation and visualization of observations made on the arXiv dataset.
 
 The papers are classified into 149 unique categories with a frequency larger than 10 and with a human-readable label available in the \href{https://arxiv.org/category_taxonomy}{arXiv category taxonomy}, with a mean of 1.6958 categories per paper. The distribution of the number of papers per category is highly skewed.
-As part of the preprocessing, all non-unique titles were removed and outlier abstracts (length $<$ 100 or $>$ 1000) were removed. Using `langdetect' I found that the abstracts were predominantly in English, which informs the choice of pretrained models. The dataset is highly imbalanced, with a long-tailed distribution of the number of papers per category. To enable stratified validation and test splits, I bucketed all multi-label categories together that had less than 10 papers.
+As part of the preprocessing, all non-unique titles were removed and outlier abstracts (length $<$ 15 or $>$ 400) were removed. Using `langdetect' I found that the abstracts were predominantly in English, which informs the choice of pretrained models. The dataset is highly imbalanced, with a long-tailed distribution of the number of papers per category. To enable stratified validation and test splits, I bucketed all multi-label categories together that had less than 10 papers.
 
 The preprocessed dataset is available at \url{https://huggingface.co/datasets/jordyvl/arXiv_dataset_prep}. The dataset contains the following fields:
 \begin{simplist}
