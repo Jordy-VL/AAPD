@@ -1,6 +1,6 @@
 # AAPD
 
-Project for Lead Researcher position @iris.ai
+Time-boxed project on research article classification
 
 ## Research article classification
 
